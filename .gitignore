@@ -1,0 +1,27 @@
+# ⚠️ 최우선 - 이거 빠지면 API 키가 유출됩니다
+.env
+*.key
+
+# 임베딩 모델 (2.2GB - 절대 커밋 금지)
+models/
+*.safetensors
+*.bin
+
+# 파이썬
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# DB (당일 재생성되므로 커밋 불필요)
+*.db
+*.sqlite3
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
