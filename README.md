@@ -26,7 +26,7 @@
 
 ```
 
-git clone https://github.com/ssub17/kcampus-navigator.git
+git clone https://github.com/select-from-korea/kcampus-navigator.git
 
 cd kcampus-navigator
 
