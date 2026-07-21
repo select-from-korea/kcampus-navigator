@@ -1,27 +1,22 @@
 # SELECT * FROM Korea - 해커톤 공용 환경
-# Python 3.11 또는 3.12 (3.13은 일부 패키지 미지원, 피할 것)
+# Python 3.12 (3.13/3.14 금지)
 #
-# 설치:
-#   python -m venv .venv
-#   .venv\Scripts\activate        (Windows)
-#   source .venv/bin/activate     (macOS)
-#   pip install -r requirements.txt
+#   py -3.12 -m venv .venv
+#   .venv\Scripts\activate
+#   pip install --no-cache-dir -r requirements.txt
 
 # ---- 데이터 처리 ----
 pandas==2.2.3
 numpy==1.26.4
 openpyxl==3.1.5
-xlrd==2.0.1
 chardet==5.2.0
 
 # ---- 분석 / 시각화 ----
 scikit-learn==1.5.2
 matplotlib==3.9.2
-plotly==5.24.1
 
 # ---- LLM / 임베딩 ----
 openai==1.54.4
-google-generativeai==0.8.3
 python-dotenv==1.0.1
 tiktoken==0.8.0
 
@@ -39,13 +34,20 @@ streamlit==1.39.0
 tqdm==4.66.5
 
 # ============================================================
-# 의도적으로 제외 - 추가하지 마세요
+# 제거한 것과 근거
 # ============================================================
+# google-generativeai
+#   : Gemini는 "OpenAI 결제 실패 시 대안"으로 넣었는데,
+#     google-api-python-client(15.6MB) + grpcio(5MB) + protobuf +
+#     google-auth 등 의존성 트리가 100MB를 넘습니다.
+#     실제로 필요해지면 그때 pip install 하면 30초입니다.
+# plotly
+#   : matplotlib 과 역할 중복. streamlit 이 altair 를 이미 포함합니다.
+#     19MB 휠 -> 설치 시 50MB+.
+# xlrd
+#   : 구형 .xls 대비용. 공공데이터는 대부분 CSV/XLSX 입니다.
+#     .xls 파일을 실제로 만나면 그때 설치하세요.
 # torch, sentence-transformers
-#   : 임베딩을 OpenAI API로 결정했으므로 불필요.
-#     Windows 설치에 30분+ 소요되고 8GB RAM에서 부담이 큽니다.
-# chromadb
-#   : fastapi/uvicorn/kubernetes 등 40개+ 의존성을 끌고 옵니다.
-#     우리 규모에서는 numpy 코사인 유사도가 더 빠릅니다.
-# langchain
-#   : 12시간 해커톤에서 추상화 레이어의 디버깅 비용이 이득보다 큽니다.
+#   : 임베딩을 OpenAI API로 결정. 불필요.
+# chromadb, langchain, faiss
+#   : 앞선 결정 참조.
