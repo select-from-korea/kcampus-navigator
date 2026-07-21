@@ -265,38 +265,89 @@ class VectorStore:
 
 _DUMMY_DOCS = [
     ("유학(D-2) 체류자격을 가진 사람이 시간제 취업을 하려면 사전에 "
-     "체류자격 외 활동허가를 받아야 한다. 주당 허용 시간은 학위과정과 "
-     "한국어능력(TOPIK) 등급에 따라 달라진다.",
+     "체류자격 외 활동허가를 받아야 한다. 허가 없이 취업할 경우 "
+     "범칙금 부과 및 체류허가 취소 사유가 된다.",
      {"title": "출입국관리법 시행령 제23조", "url": "https://www.hikorea.go.kr/"}),
+
+    ("시간제 취업 허용 시간은 학부 재학생의 경우 주중 25시간, "
+     "주말 및 방학 중에는 무제한이다. 다만 TOPIK 4급 미만이거나 "
+     "직전 학기 성적이 기준에 미달하면 시간이 절반으로 제한된다.",
+     {"title": "시간제 취업 허용시간 기준", "url": "https://www.hikorea.go.kr/"}),
 
     ("학사과정 입학을 위해서는 일반적으로 TOPIK 3급 이상 또는 "
      "대학이 인정하는 영어 성적이 필요하다. 대학별로 요건이 다르므로 "
      "지원 전 해당 대학 국제처에 확인해야 한다.",
      {"title": "외국인 유학생 입학 안내", "url": "https://www.studyinkorea.go.kr/"}),
 
+    ("석사 및 박사 과정 지원자는 학사 학위 소지 증명과 성적증명서를 "
+     "제출해야 하며, 다수 대학이 TOPIK 4급 이상 또는 공인 영어성적을 "
+     "요구한다. 연구계획서 제출이 필수인 학과도 있다.",
+     {"title": "대학원 입학 요건 안내", "url": "https://www.studyinkorea.go.kr/"}),
+
+    ("한국어 연수 과정에 등록하는 경우 일반연수(D-4) 자격을 받는다. "
+     "D-4 소지자는 입국 후 6개월이 지나야 시간제 취업 허가를 신청할 수 있다.",
+     {"title": "어학연수(D-4) 체류자격 안내", "url": "https://www.hikorea.go.kr/"}),
+
     ("외국인 등록은 입국일로부터 90일 이내에 관할 출입국·외국인청에 "
      "신청해야 한다. 미신청 시 범칙금이 부과될 수 있다.",
      {"title": "외국인등록 안내", "url": "https://www.hikorea.go.kr/"}),
+
+    ("체류지를 변경한 경우 전입일로부터 15일 이내에 새로운 체류지의 "
+     "관할 관서 또는 읍·면·동 주민센터에 체류지 변경신고를 해야 한다.",
+     {"title": "체류지 변경신고 안내", "url": "https://www.hikorea.go.kr/"}),
 
     ("유학생은 입국 후 6개월이 지나면 국민건강보험에 당연 가입된다. "
      "보험료는 매월 고지되며 미납 시 체류기간 연장이 제한될 수 있다.",
      {"title": "유학생 건강보험 안내", "url": "https://www.nhis.or.kr/"}),
 
+    ("건강보험료를 6회 이상 체납하면 보험 급여가 제한되고, "
+     "체납 사실은 체류 관련 심사에 반영된다. 분할 납부를 신청할 수 있다.",
+     {"title": "건강보험료 체납 시 조치", "url": "https://www.nhis.or.kr/"}),
+
     ("체류기간 연장허가는 만료일 4개월 전부터 만료일까지 신청할 수 있다. "
-     "성적 미달 또는 출석률 저조 시 연장이 거부될 수 있다.",
+     "신청 시 재학증명서, 성적증명서, 등록금 납입증명서를 제출한다.",
      {"title": "체류기간 연장 안내", "url": "https://www.hikorea.go.kr/"}),
+
+    ("연장 심사에서 직전 학기 학점이 기준에 미달하거나 출석률이 저조한 "
+     "경우 연장이 거부될 수 있다. 학사경고를 연속으로 받은 경우에도 "
+     "심사가 강화된다.",
+     {"title": "체류기간 연장 거부 사유", "url": "https://www.hikorea.go.kr/"}),
+
+    ("재입국허가 면제 제도에 따라 등록외국인은 출국일로부터 1년 이내에 "
+     "재입국하는 경우 별도의 재입국허가를 받지 않아도 된다.",
+     {"title": "재입국허가 면제 안내", "url": "https://www.hikorea.go.kr/"}),
+
+    ("국내 대학을 졸업한 외국인은 구직(D-10) 자격으로 변경하여 "
+     "최장 2년간 국내에 체류하며 취업을 준비할 수 있다.",
+     {"title": "졸업 후 구직(D-10) 안내", "url": "https://www.hikorea.go.kr/"}),
+
+    ("정부초청장학금(GKS)은 학비 전액과 월 생활비를 지원한다. "
+     "대학별 자체 장학금은 성적 기준과 TOPIK 등급에 따라 "
+     "등록금의 30~100%를 감면하는 방식이 일반적이다.",
+     {"title": "외국인 유학생 장학금 안내", "url": "https://www.studyinkorea.go.kr/"}),
+
+    ("기숙사 신청은 매 학기 시작 2개월 전에 진행되며, 신입 유학생에게 "
+     "우선 배정하는 대학이 많다. 수용 인원이 부족한 경우 추첨으로 결정된다.",
+     {"title": "유학생 기숙사 안내", "url": "https://www.studyinkorea.go.kr/"}),
 ]
 
-# (질문, 기대 문서 제목)  — 마지막은 문서에 없는 질문
 _TEST_QUERIES = [
     ("Can I work part-time on a D-2 visa?", "출입국관리법 시행령 제23조"),
+    ("How many hours per week can I work as a student?", "시간제 취업 허용시간 기준"),
     ("What TOPIK level do I need for a bachelor's program?", "외국인 유학생 입학 안내"),
+    ("What do I need to apply for a master's degree?", "대학원 입학 요건 안내"),
     ("How do I extend my student visa?", "체류기간 연장 안내"),
-    ("Do I need health insurance as an international student?", "유학생 건강보험 안내"),
+    ("Why would my visa extension be rejected?", "체류기간 연장 거부 사유"),
     ("When must I register as a foreign resident?", "외국인등록 안내"),
-    ("Which university has the most Chinese students?", None),   # 답 없음이 정답
+    ("I moved to a new address. What should I do?", "체류지 변경신고 안내"),
+    ("Do I need health insurance as an international student?", "유학생 건강보험 안내"),
+    ("What happens if I don't pay my insurance premiums?", "건강보험료 체납 시 조치"),
+    ("Can I stay in Korea after graduation to find a job?", "졸업 후 구직(D-10) 안내"),
+    ("Are there scholarships for international students?", "외국인 유학생 장학금 안내"),
+    ("How do I apply for a dormitory?", "유학생 기숙사 안내"),
+    ("Which university has the most Chinese students?", None),
+    ("What is the average salary of a software engineer in Seoul?", None),
 ]
-
 
 if __name__ == "__main__":
     threshold = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))
