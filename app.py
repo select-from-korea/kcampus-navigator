@@ -1,38 +1,82 @@
 import streamlit as st
+import pandas as pd
 from mock import answer_question  # 당일에 src.pipeline으로 교체
+
+# ============================================================
+# 테스트용 질문 4종 (route별 확인용, mock.py 기준)
+# ------------------------------------------------------------
+# sql     : "Which universities in Seoul have the most international students?"
+# rag     : "Can I work part-time on a D-2 visa?"
+# hybrid  : "Which region has the cheapest dormitories and what are the rules?" -> X
+# refused : "Will I get a scholarship if I apply now?"
+#
+# ⚠ 라이브 데모 시나리오(발표_슬라이드_구성 문서)와는 다름 — 데모는 A(실패시연)/B(sql)/C(rag)/D(refused) 4장면만 사용, hybrid 미포함
+# 🚧 mock.py에 hybrid 케이스가 아직 없음. 현재 hybrid 예시 질문을 넣으면 조건 미매칭으로 기본값(rag)이 리턴됨.
+# ============================================================
 
 st.set_page_config(page_title="K-Campus Navigator", layout="centered")
 st.title("K-Campus Navigator")
 
-question = st.text_input("Ask your question (e.g. visa, university stats...)")
+# 결과를 rerun 사이에도 유지하기 위한 세션 상태
+if "result" not in st.session_state:
+    st.session_state.result = None
 
-if st.button("Ask") and question:
+with st.form(key="ask_form"):
+    question = st.text_input("Ask your question (e.g. visa, university stats...)")
+    submitted = st.form_submit_button("Ask")
+
+if submitted and question.strip():
     with st.spinner("Thinking..."):
-        result = answer_question(question)
+        st.session_state.result = answer_question(question)
 
+result = st.session_state.result
+
+if result is not None:
     route = result["route"]
 
     if route == "refused":
-        st.error("⚠️ I can't answer this with confidence.")
-        st.markdown(f"**Reason:** {result['refused_reason']}")
-        st.caption(f"Confidence: {result['confidence']:.0%}")
+        st.markdown(
+            f"""
+            <div style="
+                background-color:#F5F6F8;
+                border-left: 4px solid #6B7280;
+                border-radius: 8px;
+                padding: 20px 24px;
+                margin-top: 16px;
+            ">
+                <div style="font-size:15px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    🔍 No verified answer available
+                </div>
+                <div style="font-size:14px; color:#4B5563; line-height:1.6;">
+                    {result['refused_reason']}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.caption(f"Confidence: {result['confidence']:.0%} (below answer threshold)")
 
+    # ---------- sql / rag / hybrid ----------
     else:
-        st.write(result["answer_text"])
+        if result["answer_text"]:
+            st.write(result["answer_text"])
 
         if result["table_markdown"]:
             st.markdown(result["table_markdown"])
 
         if result["chart"]["kind"] != "none":
             chart = result["chart"]
-            import pandas as pd
-            df = pd.DataFrame({chart["x_label"]: chart["labels"],
-                                chart["y_label"]: chart["values"]})
-            df = df.set_index(chart["x_label"])
+            df = pd.DataFrame({
+                chart["x_label"]: chart["labels"],
+                chart["y_label"]: chart["values"],
+            }).set_index(chart["x_label"])
+
             if chart["kind"] == "bar":
                 st.bar_chart(df)
             elif chart["kind"] == "line":
                 st.line_chart(df)
+            elif chart["kind"] == "scatter":
+                st.scatter_chart(df)
 
         if result["sources"]:
             st.subheader("Sources")
