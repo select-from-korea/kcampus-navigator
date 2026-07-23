@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from mock import answer_question  # 당일에 src.pipeline으로 교체
+from src.pipeline import answer_question, baseline_answer  # 실제 파이프라인
+# 목업으로 UI만 볼 때는 위 줄 대신: from mock import answer_question
 
 # ============================================================
 # 테스트용 질문 4종 (route별 확인용, mock.py 기준)
@@ -23,11 +24,16 @@ if "result" not in st.session_state:
 
 with st.form(key="ask_form"):
     question = st.text_input("Ask your question (e.g. visa, university stats...)")
+    # 데모 슬라이드 4 장면 A용: 순수 벡터검색(라우팅·SQL 없음) 실패 시연 토글
+    baseline = st.checkbox("🔬 Baseline: pure vector search (no routing)")
     submitted = st.form_submit_button("Ask")
 
 if submitted and question.strip():
     with st.spinner("Thinking..."):
-        st.session_state.result = answer_question(question)
+        if baseline:
+            st.session_state.result = baseline_answer(question)
+        else:
+            st.session_state.result = answer_question(question)
 
 result = st.session_state.result
 

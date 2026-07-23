@@ -208,9 +208,10 @@ def _to_chart(df: pd.DataFrame) -> ChartData:
     text_cols = [c for c in df.columns if df[c].dtype == object]
     num_cols = [c for c in df.columns
                 if pd.api.types.is_numeric_dtype(df[c])]
-    if len(text_cols) != 1 or not num_cols:
+    if not text_cols or not num_cols:
         return EMPTY_CHART
-    label_col, value_col = text_cols[0], num_cols[0]
+    # 라벨은 첫 텍스트 컬럼(예: univ_name), 값은 마지막 숫자 컬럼(대개 집계값)
+    label_col, value_col = text_cols[0], num_cols[-1]
     d = df.head(CHART_ROWS)
     return {
         "kind": "bar",

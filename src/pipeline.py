@@ -36,18 +36,17 @@ from openai import OpenAI
 BASE = Path(__file__).resolve().parent.parent
 load_dotenv(BASE / ".env")
 
-try:
-    from .contract import Answer, EMPTY_CHART, Source
-    from .router import route_question
-    from .retriever import Retriever, RetrievalResult
-    from .vector_store import VectorStore
-except ImportError:
-    import sys
-    sys.path.insert(0, str(BASE))
-    from contract import Answer, EMPTY_CHART, Source
-    from router import route_question
-    from retriever import Retriever, RetrievalResult
-    from vector_store import VectorStore
+# contract.py 는 루트, 나머지 모듈은 src/ 에 있습니다. 스크립트 실행
+# (python src/pipeline.py)과 패키지 임포트(from src.pipeline import ...)를
+# 모두 지원하도록 루트와 src 를 모두 경로에 올리고 절대 임포트를 씁니다.
+import sys
+for _p in (str(BASE), str(BASE / "src")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+from contract import Answer, EMPTY_CHART, Source
+from router import route_question
+from retriever import Retriever, RetrievalResult
+from vector_store import VectorStore
 
 _client = OpenAI()
 _LLM = os.getenv("LLM_MODEL", "gpt-4o-mini")
@@ -227,6 +226,36 @@ def _sql_answer(question: str, lang: str) -> Answer:
 # =================================================================
 #  공개 함수 — 프론트가 호출하는 유일한 진입점
 # =================================================================
+
+def baseline_answer(question: str, lang: str = "en") -> Answer:
+    """발표 슬라이드 4 장면 A — "일반 RAG 챗봇" 실패 시연용.
+
+    라우팅도 SQL도 Abstention도 없이, 순수 벡터(dense) 검색만 수행해 최상위
+    문단을 그대로 돌려줍니다. 정량형 질문(예: "서울에서 유학생이 가장 많은
+    대학은?")을 넣으면, 규정 문서 문단 하나를 반환할 뿐 **집계·순위를 못 합니다.**
+    같은 질문을 answer_question() 으로 다시 던지면 SQL 표+차트가 나오는 대비를
+    라이브로 보여줄 수 있습니다.
+    """
+    r = _ensure_loaded()
+    res = r.retrieve_dense_only(question, k=3)
+    if res.hits:
+        answer_text = (
+            "⚠️ Baseline: pure vector search — no routing, no SQL. "
+            "It retrieves a passage; it cannot count or rank.\n\n"
+            f"Top passage returned:\n\n{res.hits[0].text}"
+        )
+    else:
+        answer_text = "⚠️ Baseline: pure vector search returned no passage."
+    return {
+        "route": "rag",
+        "answer_text": answer_text,
+        "table_markdown": "",
+        "chart": EMPTY_CHART,
+        "sources": _sources_from(res),
+        "confidence": round(res.confidence, 3),
+        "refused_reason": "",
+    }
+
 
 def answer_question(question: str, lang: str = "en") -> Answer:
     if not question or not question.strip():
