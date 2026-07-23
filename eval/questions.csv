@@ -1,31 +1,31 @@
-question,expected_route,expected_outcome,category,notes
-Which universities in Seoul have the most international students?,sql,answer,ranking,universities.total + region filter
-How many Vietnamese students study in Korea?,sql,answer,count,students SUM headcount nationality=베트남
-Which universities have the most Chinese students?,sql,answer,ranking,join needed; nationality=중국
-Compare the number of international students in Seoul vs Busan.,sql,answer,compare,region aggregate
-How many students are enrolled in master's programs nationwide?,sql,answer,count,visa_status=석사과정
-Which private universities have the most engineering students?,sql,answer,ranking,establishment=사립 + engineering
-Which universities have the highest dormitory capacity rate?,sql,answer,ranking,dorm_capacity_rate desc
-How many Mongolian students are there in total?,sql,answer,count,nationality=몽골
-Which region has the most international students?,sql,answer,ranking,group by region
-List the top 10 universities by total international students.,sql,answer,ranking,universities.total desc
-How many Uzbek students are studying in Gyeonggi?,sql,answer,count,nationality=우즈베키스탄 + region=경기
-Can I work part-time on a D-2 visa? How many hours?,rag,answer,visa-work,doc25 25h/30h
-What TOPIK level do I need to work more hours?,rag,answer,visa-work,doc25 TOPIK 3/4
-What jobs are prohibited for international students?,rag,answer,visa-work,doc26 manufacturing/construction
-When should I apply for a visa extension?,rag,answer,stay,doc05 4 months before
-Why would my visa extension be rejected?,rag,answer,stay,doc29 grade C/D dropout
-Can I stay in Korea after graduation to find a job?,rag,answer,work-transition,doc33/34 D-10
-How do I change from a D-10 visa to a work visa?,rag,answer,work-transition,doc41-44 E-7
-When must I register as a foreign resident?,rag,answer,registration,doc08 within 90 days
-Do I need health insurance as an international student?,rag,answer,insurance,doc45 D-2 6 months
-How much is the health insurance premium discount for students?,rag,answer,insurance,doc46 50%
-What financial proof do I need for a D-2 student visa?,rag,answer,admission,doc37 1yr tuition+living
-How do I apply for the GKS scholarship for a master's program?,rag,answer,scholarship,doc39 GKS graduate
-What TOPIK level do I need to apply for a bachelor's program?,rag,answer,admission,doc40 varies by university
-I have a tight budget. Which universities have the cheapest dorms and what are the visa work rules?,hybrid,answer,hybrid,dorm_fee_min + part-time rules
-Which universities in Seoul have many international students and can I work part-time there on a D-2 visa?,hybrid,answer,hybrid,sql + visa rule
-Show universities with many Vietnamese students and explain the part-time work hour limits.,hybrid,answer,hybrid,sql + doc25
-Will I definitely get a scholarship if I apply now?,rag,refused,speculative,no guarantee; abstain/hedge
-Should I marry a Korean citizen to get a visa?,rag,refused,out-of-scope,personal advice; abstain
-What is the average salary of a software engineer in Seoul?,sql,refused,no-data,no salary data in DB
+question,expected_route,expected_outcome,expected_doc,category,notes
+Which universities in Seoul have the most international students?,sql,answer,,ranking,universities.total + region filter
+How many Vietnamese students study in Korea?,sql,answer,,count,students SUM headcount nationality=베트남
+Which universities have the most Chinese students?,sql,answer,,ranking,join needed; nationality=중국
+Compare the number of international students in Seoul vs Busan.,sql,answer,,compare,region aggregate
+How many students are enrolled in master's programs nationwide?,sql,answer,,count,visa_status=석사과정
+Which private universities have the most engineering students?,sql,answer,,ranking,establishment=사립 + engineering
+Which universities have the highest dormitory capacity rate?,sql,answer,,ranking,dorm_capacity_rate desc
+How many Mongolian students are there in total?,sql,answer,,count,nationality=몽골
+Which region has the most international students?,sql,answer,,ranking,group by region
+List the top 10 universities by total international students.,sql,answer,,ranking,universities.total desc
+How many Uzbek students are studying in Gyeonggi?,sql,answer,,count,nationality=우즈베키스탄 + region=경기
+Can I work part-time on a D-2 visa? How many hours?,rag,answer,25|27,visa-work,doc25 25h/30h
+What TOPIK level do I need to work more hours?,rag,answer,25,visa-work,doc25 TOPIK 3/4
+What jobs are prohibited for international students?,rag,answer,26,visa-work,doc26 manufacturing/construction
+When should I apply for a visa extension?,rag,answer,05|06,stay,doc05 4 months before
+Why would my visa extension be rejected?,rag,answer,29|07,stay,doc29 grade C/D dropout
+Can I stay in Korea after graduation to find a job?,rag,answer,33|34|18,work-transition,doc33/34 D-10
+How do I change from a D-10 visa to a work visa?,rag,answer,41|43|44,work-transition,doc41-44 E-7
+When must I register as a foreign resident?,rag,answer,08,registration,doc08 within 90 days
+Do I need health insurance as an international student?,rag,answer,45,insurance,doc45 D-2 6 months
+How much is the health insurance premium discount for students?,rag,answer,46,insurance,doc46 50%
+What financial proof do I need for a D-2 student visa?,rag,answer,37,admission,doc37 1yr tuition+living
+How do I apply for the GKS scholarship for a master's program?,rag,answer,39,scholarship,doc39 GKS graduate
+What TOPIK level do I need to apply for a bachelor's program?,rag,answer,40,admission,doc40 varies by university
+I have a tight budget. Which universities have the cheapest dorms and what are the visa work rules?,hybrid,answer,25|27,hybrid,dorm_fee_min + part-time rules
+Which universities in Seoul have many international students and can I work part-time there on a D-2 visa?,hybrid,answer,25|27,hybrid,sql + visa rule
+Show universities with many Vietnamese students and explain the part-time work hour limits.,hybrid,answer,25|27,hybrid,sql + doc25
+Will I definitely get a scholarship if I apply now?,rag,refused,,speculative,no guarantee; abstain/hedge
+Should I marry a Korean citizen to get a visa?,rag,refused,,out-of-scope,personal advice; abstain
+What is the average salary of a software engineer in Seoul?,sql,refused,,no-data,no salary data in DB
