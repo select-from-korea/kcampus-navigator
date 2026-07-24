@@ -1,5 +1,7 @@
 # kcampus-navigator
 
+[English](./README.en.md) · **한국어**
+
 한국 유학을 고려하는 외국인 학생이 **영어로 질문하면**, 숫자 질문은 **SQL**로 공공데이터를 조회하고 규정 질문은 **RAG**로 정부 문서를 검색해 **출처와 함께** 답하는 의사결정 지원 시스템입니다. 벡터 검색이 구조적으로 할 수 없는 집계·순위·비교는 라우터가 SQL 경로로 보내 처리하며, 근거가 임계값에 못 미치면 **답변을 생성하지 않고 거부** 합니다. 비자·체류 규정은 틀린 답 하나가 사람을 위험에 빠뜨릴 수 있는 도메인이기 때문입니다. `SELECT * FROM Korea` 팀의 2026 BIGDATA-USC Conference Hackathon 프로젝트입니다.
 
 ## 기술 스택
@@ -52,27 +54,38 @@ from src.pipeline import answer_question
 answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 ```
 
-### `answer_question(question, lang="en") -> Answer`
+### `answer_question(question, lang="en", profile=None) -> Answer`
 
 | 파라미터 | 타입 | 필수 | 설명 |
 |---|---|---|---|
 | `question` | string | 필수 | 사용자 질문. 영어(또는 `lang`) |
 | `lang` | string | 선택 | 답변 언어. 기본 `"en"` (`ko`, `zh` 지원) |
+| `profile` | dict | 선택 | `{visa, program, topik, nationality, grad_date, region}` — 규정 답변을 그 학생 기준으로 맞춤화. 하위호환 |
 
-질문은 먼저 **라우터**가 아래 네 경로 중 하나로 분류합니다. `refused` 는 라우터가 아니라 **검색 단계**에서 신뢰도가 임계값 미만일 때 결정됩니다.
+질문은 먼저 **선배 라운지** 레이어가 캠퍼스 생활·문화·행정 팁을 가로채고(매칭 시 `local`), 아니면 **라우터**가 아래 경로 중 하나로 분류합니다. `refused` 는 라우터가 아니라 **검색 단계**에서 신뢰도가 임계값 미만일 때 결정됩니다.
 
 | route | 언제 | 처리 |
 |---|---|---|
+| `local` | 캠퍼스 생활·문화·행정 꿀팁 (정부 문서로는 답할 수 없음) | 2단계 매칭 → '선배' 페르소나 답변 (할루시네이션 0). ① 키워드: 라우터 前 `docs/local_tips.json` 트리거 매칭 ② 의미: RAG 가 거부하려는 순간 임베딩으로 가장 가까운 팁 구제 |
 | `sql` | 개수·순위·비교·집계 | Text-to-SQL → 표 + 막대차트 |
 | `rag` | 규정·절차·자격 | 질의 한국어 번역 → 하이브리드 검색(BM25+Dense) → 출처 인용 답변 |
 | `hybrid` | 통계 + 규정 동시 | SQL + RAG 동시 |
-| `refused` | 근거가 임계값 미만 | **답변 생성 안 함** + 사유 반환 |
+| `refused` | 근거가 임계값 미만 | **답변 생성 안 함** + 스마트 거부(가까운 공식 주제·창구 안내) |
+
+### 신뢰 기능 — 왜 일반 AI(ChatGPT/Claude)가 아니라
+
+비자·체류처럼 예민한 도메인에서 일반 LLM은 **학습 컷오프에 얼어붙은 지식**으로 출처 없이 자신 있게 답합니다(틀려도). 세 장치로 차별화합니다.
+
+- **대조(contrastive) 데모** — `ungrounded_answer()`: 문서 컨텍스트 없이 LLM 에 그대로 물은 '근거 0' 답변. 데모 UI 의 `🆚 Compare` 토글로 우리 답(인용/거부)과 **나란히** 보여 grounding 의 가치를 제품이 스스로 증명합니다.
+- **최신화(freshness)** — 모든 grounded 답변 끝에 근거 문서의 **수집 기준일(as-of)** 과 "규정은 바뀔 수 있으니 하이코리아 ☎1345 로 확인" 안내를 붙입니다. 일반 AI 는 '이게 최신인지' 를 구조적으로 알 수 없습니다.
+- **스마트 거부(smart abstention)** — 근거가 없으면 막다른 "답 없음" 이 아니라, 가장 가까운 **공식 주제**와 **담당 창구(하이코리아·국제교류처)** 를 안내합니다.
+- **개인화(personalization)** — `answer_question(q, profile=...)`: 비자·과정·TOPIK·국적·졸업예정일을 주면, 근거 문서의 **조건별 규정 중 그 학생에게 해당하는 가지**(예: 석사·TOPIK4 → 주 30시간)를 골라 답합니다. 값은 문서에서 '선택' 할 뿐 지어내지 않습니다. 일반 AI 는 당신의 개인 상황을 모릅니다. UI 의 `🧑‍🎓 My profile` 로 입력.
 
 ### 응답 스키마 (`Answer`)
 
 | 필드 | 타입 | 설명 |
 |---|---|---|
-| `route` | string | `sql` \| `rag` \| `hybrid` \| `refused` |
+| `route` | string | `sql` \| `rag` \| `hybrid` \| `refused` \| `local` |
 | `answer_text` | string | 최종 답변(영어). `refused` 면 `""` |
 | `table_markdown` | string | SQL 결과 표. 없으면 `""` |
 | `chart` | object | `{kind, x_label, y_label, labels, values}`. 없으면 `kind="none"` |
@@ -123,9 +136,25 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 }
 ```
 
+### 예시 — 선배 라운지 (`local`)
+
+요청: `answer_question("Should I marry a Korean to get a visa?")` — 회색지대 질문은 키워드로 잡아 위험을 경고하고 합법 경로로 안내합니다 (차갑게 거부하지 않고, 불법도 조언하지 않음).
+
+```json
+{
+  "route": "local",
+  "answer_text": "😅 Sorry hoobae — Sunbae is your mentor, not your wedding planner ... A 'marriage of convenience' is an actual crime in Korea. The real way to stay is D-2 → D-10 (job-seeking) → E-7 (work) ...",
+  "table_markdown": "",
+  "chart": { "kind": "none", "x_label": "", "y_label": "", "labels": [], "values": [] },
+  "sources": [{ "title": "🎓 K-Campus Sunbae Lounge · campus-life tip (not an official regulation)", "snippet": "Should I marry a Korean to get a visa?", "url": null, "score": 1.0 }],
+  "confidence": 1.0,
+  "refused_reason": ""
+}
+```
+
 ### 예시 — 거부 (`refused`)
 
-요청: `answer_question("Should I marry a Korean citizen to get a visa?")`
+요청: `answer_question("How do I get Korean citizenship?")` — 코퍼스(D-2 유학생 중심)에 근거 문서가 없어 거부하고, 담당 창구를 안내합니다.
 
 ```json
 {
@@ -134,8 +163,8 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
   "table_markdown": "",
   "chart": { "kind": "none", "x_label": "", "y_label": "", "labels": [], "values": [] },
   "sources": [],
-  "confidence": 0.392,
-  "refused_reason": "No supporting document was found above our confidence threshold (0.42; best match scored 0.392). We do not generate answers about immigration or academic rules without a verifiable source."
+  "confidence": 0.366,
+  "refused_reason": "We don't have a verified official source for this (best match 0.366 < threshold 0.42), so we won't guess — a wrong visa or immigration answer can put you at real risk. For your specific situation, contact HiKorea (☎ 1345, hikorea.go.kr) or your international office."
 }
 ```
 
@@ -153,8 +182,11 @@ kcampus-navigator/
 │   ├── loader.py          # docs/*.md → 청크 → 임베딩 → vectors.npz
 │   ├── build_db.py        # 공공데이터 CSV → SQLite(kcampus.db)
 │   ├── sql_chain.py       # Text-to-SQL (값 한국어 용어집 + 실패 시 self-repair)
+│   ├── local.py           # 선배 라운지: 로컬 생활·문화 팁 매칭 (라우터 前 실행)
 │   └── pipeline.py        # 전체 조립: answer_question() 진입점
-├── docs/                  # RAG 코퍼스: 정부 규정 문서 46개(.md) + 발표 자료
+├── docs/
+│   ├── local_tips.json    # 선배 라운지 큐레이션 팁 21개 (규정 아님, 생활/문화/행정)
+│   └── *.md               # RAG 코퍼스: 정부 규정 문서 46개 + 발표 자료
 ├── data/
 │   ├── raw/               # 원본 공공데이터 CSV
 │   └── processed/         # vectors.npz(검색 인덱스), kcampus.db(SQLite)
@@ -165,7 +197,9 @@ kcampus-navigator/
 ## 검증·재보정 명령
 
 ```bash
-python src/pipeline.py                     # 4경로 스모크 테스트
+python src/pipeline.py                     # 경로별 스모크 테스트
+python src/local.py                        # 선배 라운지 키워드 스모크 (무API)
+python src/local.py --semantic             # 선배 라운지 의미 매칭 스모크 (API 필요)
 python src/router.py eval/questions.csv    # 라우터 분류 정확도 (29/30)
 python eval/run_eval.py                    # 검색 재보정 (브릿지·전략·임계값 스윕)
 ```

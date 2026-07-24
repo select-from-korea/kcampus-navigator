@@ -28,7 +28,10 @@ class ChartData(TypedDict):
 
 
 class Answer(TypedDict):
-    route: Literal["sql", "rag", "hybrid", "refused"]
+    # "local" 은 v1 에 추가된 additive 값입니다 (선배 라운지 로컬 팁).
+    # 프론트는 route=="refused" 만 특별 처리하고 나머지는 answer_text+sources
+    # 로 렌더하므로, 기존 UI 는 "local" 을 자동으로 안전하게 표시합니다.
+    route: Literal["sql", "rag", "hybrid", "refused", "local"]
     answer_text: str      # 사용자에게 보여줄 최종 답변 (영어)
     table_markdown: str   # SQL 결과 표. 없으면 ""
     chart: ChartData      # 없으면 kind="none"
@@ -43,6 +46,11 @@ EMPTY_CHART: ChartData = {
 }
 
 
-def answer_question(question: str, lang: str = "en") -> Answer:
-    """프론트는 이 함수 하나만 호출합니다."""
+def answer_question(question: str, lang: str = "en",
+                    profile: Optional[dict] = None) -> Answer:
+    """프론트는 이 함수 하나만 호출합니다.
+
+    profile(선택, 하위호환): {visa, program, topik, nationality, grad_date,
+    region} 중 채워진 것만. 주면 규정 답변을 그 학생 기준으로 맞춤화합니다.
+    """
     raise NotImplementedError

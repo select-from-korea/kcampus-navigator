@@ -1,0 +1,178 @@
+{
+  "_meta": {
+    "title": "K-Campus 선배 라운지 (Sunbae Lounge) — curated campus-life tips",
+    "persona": "A warm, slightly teasing Korean upperclassman (선배) who has helped many international juniors survive their first year in Korea.",
+    "note": "These are hand-curated local tips, NOT official regulations. The government-document RAG path stays strictly source-grounded; this layer adds Korea-only life/culture/bureaucracy know-how that no official PDF contains. 'kind: grayzone' entries never advise anything illegal — they warn and redirect to the legit path the RAG can actually answer.",
+    "lang": "en"
+  },
+  "tips": [
+    {
+      "id": "sham-marriage",
+      "category": "visa-grayzone",
+      "kind": "grayzone",
+      "ask": "Should I marry a Korean to get a visa or citizenship?",
+      "triggers": ["marry a korean", "marry korean", "marriage to get", "marry to get", "marry for a visa", "marry for visa", "marriage visa", "marry a local", "citizenship by marry", "marry to stay", "fake marriage", "marry someone for"],
+      "answer": "😅 Sorry 후배 (hoobae, 'junior') — 선배 is your mentor, not your wedding planner, and honestly immigration isn't playing matchmaker either. A 'marriage of convenience' (위장결혼, wijang-gyeolhon) is an actual crime in Korea for BOTH people, and officers investigate them hard — home visits, questions about your partner's daily habits, the works. The real way to stay long-term is the student → job path: graduate on D-2 → switch to a D-10 job-seeking visa → land a job and move to an E-7 work visa. Ask me 'Can I stay in Korea after graduation to find a job?' and I'll pull the official rules for you. 💪"
+    },
+    {
+      "id": "work-more-hours",
+      "category": "visa-grayzone",
+      "kind": "grayzone",
+      "ask": "Can I just work more hours than allowed if immigration doesn't find out?",
+      "triggers": ["work more hours than allowed", "work extra hours secretly", "work over the limit", "work more than allowed", "if immigration doesn't find out", "work illegally", "under the table", "cash job", "work without permission", "work off the books"],
+      "answer": "I feel you, tuition is brutal 😮‍💨 — but 선배 has to be real: working over your permitted hours (or without the 시간제취업 permit) is the fastest way to get your visa cancelled and even earn a re-entry ban. Employers get fined too, so most won't risk it. Do it the smart way — get the part-time work permit, keep your grades up, and you actually unlock MORE legal hours with a TOPIK level. Ask me 'How many hours can I work on a D-2 visa?' and I'll show the official limits. 📈"
+    },
+    {
+      "id": "overstay",
+      "category": "visa-grayzone",
+      "kind": "grayzone",
+      "ask": "Can I overstay my visa just a little bit?",
+      "triggers": ["overstay", "stay after my visa expires", "stay past my visa", "visa expired what happens", "what if i overstay", "stay illegally", "let my visa expire"],
+      "answer": "Please don't 🙏. Even a few days of overstay in Korea means fines that pile up daily, and a longer overstay can trigger a re-entry ban that wrecks future plans. If your visa is close to expiring, the move is to apply for an extension EARLY — you can apply up to about 4 months before it ends. Ask me 'When should I apply for a visa extension?' and I'll pull the official timing and document list. Future-you will thank present-you. 😌"
+    },
+    {
+      "id": "phone-bank-chicken-egg",
+      "category": "bureaucracy",
+      "kind": "normal",
+      "ask": "How do I get a phone number and bank account as a foreigner?",
+      "triggers": ["get a phone number", "get a sim", "phone plan as a foreigner", "open a bank account", "bank account as a foreigner", "phone before bank", "chicken and egg", "phone number korea", "sim card korea", "korean bank account"],
+      "answer": "Ah, the classic Korea starter quest 🥲: you need an Alien Registration Card (외국인등록증, ARC) for a normal phone plan, you kind of need a phone for the bank, and you want a bank account for everything else. The escape route that actually works: (1) grab a prepaid SIM at the airport or a convenience store — passport only, no ARC needed; (2) apply for your ARC; (3) once it arrives, upgrade to a real phone plan and open your bank account. Bring your ARC, passport, and a certificate of enrollment to the bank. Some branches are way more foreigner-friendly than others, so ask your school's international office which one to go to. 🧭"
+    },
+    {
+      "id": "kakaotalk-mandatory",
+      "category": "bureaucracy",
+      "kind": "normal",
+      "ask": "Do I really need KakaoTalk?",
+      "triggers": ["do i need kakaotalk", "need kakao", "kakaotalk mandatory", "everyone use kakao", "what messenger", "whatsapp in korea", "which chat app", "kakao talk"],
+      "answer": "Yes. Resistance is futile 😂. KakaoTalk (카톡, 'katok') is how your classmates, professors, group projects, part-time boss, and even delivery confirmations happen — WhatsApp and Telegram barely exist here socially. Install it on day one, set a profile pic (people WILL quietly judge a blank one 😅), and brace yourself for the 조별과제 (group-project) chat that haunts every student's dreams. Bonus apps from the same world: KakaoT for taxis, KakaoMap for directions — Google Maps is weirdly weak in Korea."
+    },
+    {
+      "id": "tmoney-transit",
+      "category": "bureaucracy",
+      "kind": "normal",
+      "ask": "How do I pay for the subway and buses?",
+      "triggers": ["t-money", "tmoney", "transit card", "how to pay for subway", "bus card", "how to ride the subway", "how do i take the bus", "public transport card", "transportation card", "get around the city", "getting around", "public transport", "how to get around", "cheap transport", "commute"],
+      "answer": "Grab a T-money card 🚇 — buy it at any convenience store (around ₩2,500 for the card), load cash at the store or subway machines, and tap it on buses, subways, taxis, even convenience-store purchases nationwide. The magic feature: transfers are basically free within ~30 minutes IF you tap out when you get off — so ALWAYS tap out. Students can register for a discounted youth fare (ask your international office). One warning: a T-money card is like a cash wallet, so if you lose it, you lose whatever's loaded on it 😅."
+    },
+    {
+      "id": "mt-hwesik-drinking",
+      "category": "campus-life",
+      "kind": "normal",
+      "ask": "Do I have to drink at MT or 회식?",
+      "triggers": ["drink at mt", "have to drink", "hwesik", "membership training", "what is mt", "forced to drink", "don't drink alcohol", "do i have to drink", "drinking culture", "drink soju", "should i drink", "soju", "refuse alcohol", "refuse a drink", "decline a drink", "peer pressure to drink", "expect me to drink", "drink at work", "drink at company", "drinking at work", "work dinner", "company dinner", "team dinner", "work gathering", "회식"],
+      "answer": "You do NOT have to drink 🍺🚫 — any decent group respects 'I don't drink' (say '저 술 안 마셔요', jeo sul an masheoyo). MT (Membership Training, 엠티) and 회식 (hwesik, team dinners) are really about bonding, not booze, these days. Tips that make you look like a pro: pour drinks for others with both hands, turn your head slightly away from elders when you sip, and never fill your own glass — someone will fill it for you. Order a cider or juice and you're golden. Honestly the real MT danger isn't alcohol, it's the 4 a.m. 진실게임 (truth game) 😭."
+    },
+    {
+      "id": "cagong-cafe-study",
+      "category": "campus-life",
+      "kind": "normal",
+      "ask": "Can I study in a cafe for hours?",
+      "triggers": ["study in cafe", "cafe study", "cagong", "can i study in a cafe", "coffee shop study", "study cafe", "where to study", "study space", "카공"],
+      "answer": "Welcome to 카공 (cagong = 'cafe + study') culture ☕📚. It's completely normal to buy one Americano and camp for hours with your laptop — cafes have wall outlets, and there are whole 스터디카페 (study-cafe) chains you pay by the hour with free drinks. Etiquette: buy something, don't hog a six-person table solo at peak times, and during finals expect an all-out war for seats. 24-hour cafes and study cafes are clutch for all-nighters. 🔋"
+    },
+    {
+      "id": "makcha-last-train",
+      "category": "campus-life",
+      "kind": "normal",
+      "ask": "How late does the subway run and what is 막차?",
+      "triggers": ["makcha", "last train", "last subway", "miss the last train", "how late does the subway run", "how late is the subway", "last bus", "막차"],
+      "answer": "막차 (makcha) = the last train or bus, and watching for it is basically a Korean nightlife sport 🏃💨. Seoul subways roughly stop around midnight (varies by line), so near 11 p.m. you'll see people suddenly speed-walking mid-sentence. Miss it and your options are: the night bus (올빼미버스, the 'owl bus' N-lines in Seoul), a KakaoT taxi (pricier late with a surcharge), or — the emergency classic — a 찜질방 (jjimjilbang sauna) as a ~₩10,000 overnight hotel 😴. Screenshot the last-train times for your line and thank me later."
+    },
+    {
+      "id": "sunbae-hoobae",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "What is the sunbae / hoobae senior-junior thing?",
+      "triggers": ["sunbae", "hoobae", "senior junior", "who pays", "hierarchy at university", "call my senior", "seniority", "선배", "후배"],
+      "answer": "선배 (seonbae) = senior, 후배 (hoobae) = junior — and yes, it matters even with a one-year gap 😄. The upside for you: seniors are semi-obligated to look after juniors, which often means the 선배 grabs the bill for coffee or the first round 🍻 (don't expect it, but don't fight too hard either — a warm '감사합니다!' is perfect). In return, juniors show respect with polite speech and small gestures like pouring a senior's drink or greeting them first. It's less rigid than it sounds — mostly it just means you've got built-in mentors. Lucky you, you already found one right here 😎."
+    },
+    {
+      "id": "korean-age",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "Why does everyone ask my age?",
+      "triggers": ["why do people ask my age", "ask my age", "why is age important", "korean age", "how old are you korea", "asking my age", "age matters"],
+      "answer": "It's not nosiness — it's grammar 😅. Korean has different speech levels for older vs. younger, so people need your age to know whether you're 형/오빠/누나/언니 (older) or 동생 (younger), and who's the 선배/후배. Once ages are settled, the older one often pays for coffee 😎 and you use polite forms. Handy update: Korea officially switched to international age (만 나이) in 2023, so your age here now matches your passport — no more mysterious +1 or +2 years."
+    },
+    {
+      "id": "nunchi",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "What is 눈치 and why can't I leave before my boss?",
+      "triggers": ["what is nunchi", "nunchi", "reading the room", "why can't i leave work early", "leave before my boss", "눈치"],
+      "answer": "눈치 (nunchi) = the social radar for reading a room and sensing what's unsaid. Being told you have '눈치가 빠르다' (quick nunchi) is a real compliment. Classic moves: not being the first to leave a dinner, noticing a senior's cup is empty and refilling it, sensing 'the meeting is actually over' before anyone says it. You don't have to be perfect at it — just visibly *trying* to read the room earns an international student a ton of goodwill. 🤝"
+    },
+    {
+      "id": "shoes-off",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "Do I take my shoes off indoors?",
+      "triggers": ["take off shoes", "shoes off", "shoes indoors", "shoes inside", "remove shoes", "shoes in the house"],
+      "answer": "Shoes OFF indoors — always at homes, many guesthouses, some restaurants (the floor-seating ones), and even some study cafes 🥿. There's usually a clear step-down entryway (현관, hyeongwan) where shoes stop and the floor begins; stepping past it in shoes is a genuine faux pas. Two survival tips: (1) keep your socks hole-free 🧦😅, and (2) floor-seating restaurants give you a cubby for your shoes. When in doubt, look down — if you see a neat row of shoes, join them."
+    },
+    {
+      "id": "red-ink-names",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "Is it bad to write a name in red ink?",
+      "triggers": ["red ink", "write name in red", "red pen name", "name in red", "writing names in red"],
+      "answer": "Tiny one that saves you an awkward gasp: don't write a living person's name in red ink ✍️❌. Red was traditionally used for the names of the deceased, so writing a friend's name in red reads as 'I wish you were dead' 💀. It's totally fine for corrections, underlining, or doodles — just switch to a blue or black pen when you write someone's actual name. Congrats, you now have better name-etiquette than half of K-drama characters 😎."
+    },
+    {
+      "id": "student-cafeteria",
+      "category": "food",
+      "kind": "normal",
+      "ask": "Where can I eat cheap near campus?",
+      "triggers": ["cheap food near campus", "student cafeteria", "haksik", "eat cheap", "cheap meals", "where to eat on a budget", "cheapest food", "affordable food", "학식"],
+      "answer": "Your wallet's best friend is the 학식 (haksik, student cafeteria) — full meals often ₩4,000–6,000, sometimes cheaper than cooking. Off-campus survival tier: 김밥천국/김밥나라 (open 24h, ~₩3,500 kimbap), 백반 (baekban) home-style set meals, and the convenience-store 삼각김밥 + ramyeon combo. Look for the '오늘의 메뉴' (today's special). Pro move: many spots refill 밑반찬 (side dishes) for free — just ask '리필 돼요?' 😋"
+    },
+    {
+      "id": "delivery-apps",
+      "category": "food",
+      "kind": "normal",
+      "ask": "How do I order food delivery?",
+      "triggers": ["delivery app", "baemin", "how to order delivery", "coupang eats", "order food online", "food delivery korea", "order takeout", "how to order food"],
+      "answer": "배달의민족 (Baemin, 배민) and 쿠팡이츠 are the big two 🛵. They lean Korean-only, but you can switch the app language and pay with a foreign or Korean card. Two gotchas: (1) many places set a minimum order (최소주문금액) plus a delivery fee, so team up with roommates; (2) you'll need your address in Korean — save it once and you're set. Can't crack the app yet? 포장 (pojang, takeout) by phone or in person works fine, and even some convenience stores deliver."
+    },
+    {
+      "id": "haejang-hangover",
+      "category": "food",
+      "kind": "normal",
+      "ask": "What do Koreans eat for a hangover?",
+      "triggers": ["hangover", "haejang", "hangover food", "what to eat after drinking", "cure a hangover", "해장"],
+      "answer": "Korea has an entire food genre for this: 해장국 (haejangguk, literally 'hangover soup') 🍲. After a rough night, locals go for hot soups — 콩나물국밥 (bean sprout), 순댓국, or 북엇국 (dried pollock) — plus a sports drink or one of the legendary 컨디션 / 모닝케어 hangover-relief drinks from any convenience store. There's basically a rule that the night needs soju and the morning needs soup. Hydrate, 후배 💧."
+    },
+    {
+      "id": "tipping",
+      "category": "money",
+      "kind": "normal",
+      "ask": "Do I tip in Korea?",
+      "triggers": ["do i tip", "tipping in korea", "should i tip", "how much to tip", "tip the waiter", "is tipping", "tipping culture"],
+      "answer": "Great news for your budget: no tipping in Korea 🙅. Restaurants, taxis, cafes, salons — the price is the price, tax included. Trying to tip usually just confuses staff, who may even chase you down to return your 'forgotten' change 😂. Fancier restaurants might add a service charge to the bill, but you never add your own. Put that saved cash toward 치맥 (chimaek = fried chicken + beer 🍗🍺) instead."
+    },
+    {
+      "id": "jeonse-wolse",
+      "category": "money",
+      "kind": "normal",
+      "ask": "How does renting work — what is jeonse / wolse / deposit?",
+      "triggers": ["jeonse", "wolse", "what is deposit", "how does rent work", "rent deposit", "monthly rent korea", "housing deposit", "보증금", "전세", "월세", "how to rent an apartment"],
+      "answer": "Korean housing runs on two modes 🏠: 월세 (wolse) = monthly rent plus a deposit (보증금, bojeunggeum), and 전세 (jeonse) = one big lump-sum deposit and NO monthly rent (you get it all back when you move out). As a student you'll almost always do 월세, a dorm, or a 고시원/하숙. Heads up: even 월세 deposits can run a few million won, and 전세 scams are a real thing — never sign without checking the 등기부등본 (property register), and ideally bring a Korean-speaking friend or your international office. This is 선배 ballpark, not legal advice — always verify the contract ⚠️."
+    },
+    {
+      "id": "korea-safety",
+      "category": "safety",
+      "kind": "normal",
+      "ask": "Is Korea safe, especially at night?",
+      "triggers": ["is korea safe", "safe at night", "safe to walk", "crime in korea", "dangerous at night", "is it safe", "safety in korea", "walk alone at night"],
+      "answer": "Korea is genuinely one of the safer places you'll live 🌙 — late-night convenience runs, 24-hour cafes, and last-train crowds are all totally normal. The famous party trick: people leave a phone or bag on a cafe table to 'save their seat' and it's still there when they return (please don't test this with YOUR stuff, though 😅). Normal city street-smarts still apply, and if you ever need help: 112 = police, 119 = fire/ambulance, and the 1345 immigration hotline has foreign-language support."
+    },
+    {
+      "id": "survive-without-korean",
+      "category": "culture",
+      "kind": "normal",
+      "ask": "Can I survive in Korea without speaking Korean?",
+      "triggers": ["survive without korean", "without speaking korean", "do i need to speak korean", "get by without korean", "english enough in korea", "don't know korean", "do i need korean", "without knowing korean", "speak english in korea", "not speaking korean"],
+      "answer": "You can survive, but a little Korean flips life from 'hard mode' to 'chill' 😌. Big cities and campuses have English signs, translation apps carry you (Papago beats Google for Korean), and younger folks often understand some English. But your landlord, the immigration office, and the 아주머니 at the corner restaurant? Korean helps a LOT. Learn 한글 (hangul) in a weekend — it's honestly easy — pick up survival phrases, and take TOPIK seriously: it unlocks more part-time work hours and some scholarships. 화이팅! 💪"
+    }
+  ]
+}
