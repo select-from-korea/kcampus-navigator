@@ -1,0 +1,39 @@
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" font-family="Poppins, Montserrat, 'Trebuchet MS', 'Helvetica Neue', Arial, sans-serif">
+  <!-- 발표 덱(슬라이드 초안2) 9번 "Number sources" 교체용.
+       변경 ① 각주 ⁵ (학교별 장학금 출처) 추가
+            ② ² 항목 끝의 내부 작업 지시문 `label "our own measurement" on slides` 삭제 -->
+  <rect width="1280" height="720" fill="#F2F3F5"/>
+
+  <!-- Title -->
+  <text x="238" y="152" font-size="46" font-weight="800" fill="#111111">Number sources</text>
+  <circle cx="682" cy="130" r="13" fill="#2E5BFF"/>
+
+  <!-- 1 -->
+  <text x="240" y="244" font-size="20" font-weight="700" fill="#2E5BFF">1</text>
+  <text x="272" y="244" font-size="21" font-weight="700" fill="#111111">data.go.kr / 대학알리미 (2025)</text>
+  <text x="272" y="270" font-size="16" fill="#6B7280">224 universities · 197,163 international students</text>
+
+  <!-- 2 -->
+  <text x="240" y="322" font-size="20" font-weight="700" fill="#2E5BFF">2</text>
+  <text x="272" y="322" font-size="21" font-weight="700" fill="#111111">Our own measurement — 2026-07-24 corpus</text>
+  <text x="272" y="348" font-size="16" fill="#6B7280">eval/run_eval.py · eval/sql_eval.py · src/router.py</text>
+
+  <!-- 3 -->
+  <text x="240" y="400" font-size="20" font-weight="700" fill="#2E5BFF">3</text>
+  <text x="272" y="400" font-size="21" font-weight="700" fill="#111111">법무부 자격별 안내 매뉴얼 (2026.07.09)</text>
+  <text x="272" y="426" font-size="16" fill="#6B7280">Ministry of Justice · residence manuals by status — the 25 / 30 / 35 / 10 / 15-hour branches</text>
+
+  <!-- 4 -->
+  <text x="240" y="478" font-size="20" font-weight="700" fill="#2E5BFF">4</text>
+  <text x="272" y="478" font-size="21" font-weight="700" fill="#111111">Self-run EDA — notebooks/eda.ipynb</text>
+  <text x="272" y="504" font-size="16" fill="#6B7280">dorm-fee missingness by university size: small 51% · medium 30% · large 7%</text>
+
+  <!-- 5 (new) -->
+  <text x="240" y="556" font-size="20" font-weight="700" fill="#2E5BFF">5</text>
+  <text x="272" y="556" font-size="21" font-weight="700" fill="#111111">Each university's own scholarship notice</text>
+  <text x="272" y="582" font-size="16" fill="#6B7280">University of Seoul · Sookmyung — hand-curated 2026-07-25 · docs/scholarships.json</text>
+
+  <!-- footer note -->
+  <rect x="240" y="622" width="800" height="52" rx="12" fill="#2E5BFF"/>
+  <text x="640" y="654" font-size="17" font-weight="700" fill="#FFFFFF" text-anchor="middle">Government data and rules are cited. Performance numbers are ours, and labelled as ours.</text>
+</svg>

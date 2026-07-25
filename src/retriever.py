@@ -295,19 +295,6 @@ class Retriever:
             },
         )
 
-    # ---------- Dense 단독 (발표 비교용) ----------
-
-    def retrieve_dense_only(self, query: str, k: int = 5,
-                            translate: bool = True) -> RetrievalResult:
-        """발표 슬라이드 3번(순수 RAG 실패 시연)에서 사용합니다."""
-        ko_query = translate_to_korean(query) if translate else query
-        hits = self.store.search(ko_query, k=k, translate=False)
-        conf = hits[0].score if hits else 0.0
-        return RetrievalResult(
-            query=query, ko_query=ko_query, hits=hits,
-            confidence=conf, refused=conf < self.threshold,
-        )
-
 
 # =================================================================
 #  단독 실행 — Dense vs Hybrid 비교

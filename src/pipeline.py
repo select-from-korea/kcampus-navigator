@@ -1,8 +1,7 @@
 """
 pipeline.py — 전체 조립: 질문 → 라우팅 → 검색/생성 → Answer 계약
 
-당일 프론트는 mock.answer_question 을 이 파일의 answer_question 으로
-한 줄만 바꿉니다 (contract.py 시그니처 그대로).
+프론트는 이 파일의 answer_question 하나만 호출합니다 (contract.py 시그니처 그대로).
 
     from src.pipeline import answer_question
     ans = answer_question("Can I work part-time on a D-2 visa?")
@@ -366,40 +365,6 @@ def _sql_answer(question: str, lang: str) -> Answer:
 # =================================================================
 #  공개 함수 — 프론트가 호출하는 유일한 진입점
 # =================================================================
-
-def baseline_answer(question: str, lang: str = "en") -> Answer:
-    """대조군 2 — "라우팅 없는 순수 RAG 챗봇" 실패 재현용.
-
-    ⚠️ 라이브 데모 UI 에서는 제거했습니다(5분 안에 들어가지 않고, 대조는
-    ungrounded_answer 하나로 충분). 코드로는 그대로 재현 가능하며 Q&A 에서
-    "벡터 검색이 왜 집계를 못 하나" 를 물으면 이걸 돌려 보여줄 수 있습니다.
-
-    라우팅도 SQL도 Abstention도 없이, 순수 벡터(dense) 검색만 수행해 최상위
-    문단을 그대로 돌려줍니다. 정량형 질문(예: "서울에서 유학생이 가장 많은
-    대학은?")을 넣으면, 규정 문서 문단 하나를 반환할 뿐 **집계·순위를 못 합니다.**
-    같은 질문을 answer_question() 으로 다시 던지면 SQL 표+차트가 나오는 대비를
-    라이브로 보여줄 수 있습니다.
-    """
-    r = _ensure_loaded()
-    res = r.retrieve_dense_only(question, k=3)
-    if res.hits:
-        answer_text = (
-            "⚠️ Baseline: pure vector search — no routing, no SQL. "
-            "It retrieves a passage; it cannot count or rank.\n\n"
-            f"Top passage returned:\n\n{res.hits[0].text}"
-        )
-    else:
-        answer_text = "⚠️ Baseline: pure vector search returned no passage."
-    return {
-        "route": "rag",
-        "answer_text": answer_text,
-        "table_markdown": "",
-        "chart": EMPTY_CHART,
-        "sources": _sources_from(res),
-        "confidence": round(res.confidence, 3),
-        "refused_reason": "",
-    }
-
 
 def answer_question(question: str, lang: str = "en",
                     profile: dict | None = None) -> Answer:

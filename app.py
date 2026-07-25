@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from src.pipeline import answer_question, ungrounded_answer  # 실제 파이프라인
 from src.scholarships import known_schools
-# 목업으로 UI만 볼 때는 위 줄 대신: from mock import answer_question
 
 # ============================================================
 # 데모 시나리오 (발표 덱 슬라이드 5 'Live Demo' · 대본 v7 기준)

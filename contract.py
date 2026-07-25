@@ -4,9 +4,8 @@
 #  ⚠️ 이 파일은 확정본입니다. 임의 변경 금지.
 #     변경이 필요하면 반드시 팀 채팅방에 먼저 알릴 것.
 #
-#  프론트는 이 시그니처만 믿고 개발하세요.
-#  당일에는 mock.answer_question 을 src.pipeline.answer_question 으로
-#  교체하기만 하면 됩니다.
+#  프론트는 이 시그니처만 믿고 개발합니다.
+#  구현체는 src/pipeline.py 의 answer_question 하나뿐입니다.
 # ============================================================
 
 from typing import TypedDict, Literal, List, Optional

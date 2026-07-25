@@ -1,0 +1,35 @@
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" font-family="Poppins, Montserrat, 'Trebuchet MS', 'Helvetica Neue', Arial, sans-serif">
+  <!-- 발표 덱(슬라이드 초안2) 7번 "The Numbers" 교체용.
+       기존 4행 + SQL answer accuracy 5 / 5 (2026-07-26 실측 · 2회 재현) -->
+  <rect width="1280" height="720" fill="#F2F3F5"/>
+
+  <!-- Title -->
+  <text x="238" y="152" font-size="46" font-weight="800" fill="#111111">The Numbers</text>
+  <circle cx="551" cy="130" r="13" fill="#2E5BFF"/>
+
+  <!-- Card -->
+  <rect x="300" y="200" width="800" height="464" rx="18" fill="#FFFFFF"/>
+  <path d="M 318 200 H 1082 A 18 18 0 0 1 1100 218 V 226 H 300 V 218 A 18 18 0 0 1 318 200 Z" fill="#2E5BFF"/>
+
+  <text x="340" y="278" font-size="15" font-weight="600" fill="#8A8F98" letter-spacing="1.2">ALL SELF-MEASURED · 7/24 CORPUS · RAW FRACTIONS</text>
+  <line x1="340" y1="302" x2="1060" y2="302" stroke="#E6E8EB" stroke-width="1.5"/>
+
+  <text x="340" y="348" font-size="21" font-weight="600" fill="#111111">Router accuracy</text>
+  <text x="1060" y="350" font-size="27" font-weight="700" fill="#111111" text-anchor="end">29 / 30</text>
+  <line x1="340" y1="376" x2="1060" y2="376" stroke="#E6E8EB" stroke-width="1.5"/>
+
+  <text x="340" y="422" font-size="21" font-weight="600" fill="#111111">Retrieval recall@3</text>
+  <text x="1060" y="424" font-size="27" font-weight="700" fill="#111111" text-anchor="end">13 / 16</text>
+  <line x1="340" y1="450" x2="1060" y2="450" stroke="#E6E8EB" stroke-width="1.5"/>
+
+  <text x="340" y="496" font-size="21" font-weight="600" fill="#111111">Abstention <tspan font-size="16" font-weight="500" fill="#8A8F98">@ 0.42</tspan></text>
+  <text x="1060" y="498" font-size="27" font-weight="700" fill="#111111" text-anchor="end">21 / 22</text>
+  <line x1="340" y1="524" x2="1060" y2="524" stroke="#E6E8EB" stroke-width="1.5"/>
+
+  <text x="340" y="570" font-size="21" font-weight="600" fill="#111111">SQL answer accuracy <tspan font-size="15" font-weight="500" fill="#8A8F98">vs independent pandas oracle</tspan></text>
+  <text x="1060" y="572" font-size="27" font-weight="700" fill="#111111" text-anchor="end">5 / 5</text>
+  <line x1="340" y1="598" x2="1060" y2="598" stroke="#E6E8EB" stroke-width="1.5"/>
+
+  <text x="340" y="628" font-size="21" font-weight="600" fill="#111111">EN → KO bridge <tspan font-size="15" font-weight="500" fill="#8A8F98">avg similarity</tspan></text>
+  <text x="1060" y="630" font-size="27" font-weight="700" fill="#111111" text-anchor="end">0.45 → 0.54</text>
+</svg>

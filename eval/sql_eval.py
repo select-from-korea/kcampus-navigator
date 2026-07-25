@@ -128,4 +128,8 @@ def main(dry):
     print("\n" + "=" * 78 + f"\n  라우팅 정확도 : {ro}/{n}\n  SQL 정답 정확도: {an}/{n}   ← 슬라이드/Q&A에 이 원분수\n" + "=" * 78)
 
 if __name__ == "__main__":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")   # Windows 콘솔(cp949)에서 '—' 깨짐 방지
+    except Exception:
+        pass
     main(dry="--dry" in sys.argv)
