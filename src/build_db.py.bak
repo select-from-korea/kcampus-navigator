@@ -1,4 +1,4 @@
-﻿"""
+"""
 build_db.py — 공공데이터 CSV → SQLite (SQL 경로의 데이터 소스)
 
 무엇을 만드는가
@@ -31,7 +31,7 @@ import sqlite3
 from pathlib import Path
 
 import pandas as pd
-import numpy as np
+
 BASE = Path(__file__).resolve().parent.parent
 RAW = BASE / "data" / "raw"
 DB_PATH = BASE / "data" / "processed" / "kcampus.db"
@@ -66,7 +66,7 @@ def load_universities() -> pd.DataFrame:
     u["univ_name"] = u["univ_name"].map(_clean_name)
     # 어학요건 충족 비율은 합산 후 재계산 (퍼센트를 더하면 안 되므로)
     u["lang_qualified_ratio"] = (
-        u["lang_qualified_total"] / u["degree_total"].replace(0, np.nan) * 100
+        u["lang_qualified_total"] / u["degree_total"].replace(0, pd.NA) * 100
     ).round(1)
 
     cols = ["univ_key"] + _SUM_COLS + ["lang_qualified_ratio"] + \
