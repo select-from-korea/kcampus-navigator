@@ -9,8 +9,9 @@ demo_check.py — 발표 직전 프리플라이트: 데모 6장면이 지금도 
 
 무엇을 검사하는가
   각 장면의 **route 가 대본이 약속한 값과 같은지**. 답변 문장까지 채점하지는
-  않습니다(LLM 이라 문장은 매번 다릅니다). 대신 route 와 핵심 수치(30/10시간)
-  존재 여부만 봅니다 — 대본이 그 두 가지에 의존하기 때문입니다.
+  않습니다(LLM 이라 문장은 매번 다릅니다). 대신 route 와 핵심 수치 존재
+  여부만 봅니다 — 대본이 그 둘에 의존하기 때문입니다. 특히 B-1(프로필 없음,
+  모든 가지 나열)과 B-2(Roger, 주 30시간 한 줄)의 대비가 살아 있는지.
 
 사용법
   python eval/demo_check.py          # 전체 (API 필요, 약 40초)
@@ -28,32 +29,29 @@ for _p in (str(BASE), str(BASE / "src")):
         sys.path.insert(0, _p)
 
 # 발표 대본과 동일한 페르소나 (app.py 의 PERSONAS 와 같은 값)
-LINH = {
+ROGER = {
     "visa": "D-2 (student)", "program": "Master's",
-    "school": "University of Seoul (서울시립대학교)", "topik": "4",
-    "nationality": "Vietnam", "grad_date": "2027-02", "region": "Seoul",
-}
-MAI = {
-    "visa": "D-2 (student)", "program": "Undergraduate (3-4yr)",
-    "school": "Sookmyung Women's University (숙명여자대학교)", "topik": "2",
-    "nationality": "Vietnam", "grad_date": "2028-02", "region": "Seoul",
+    "school": "University of Seoul (서울시립대학교)", "major": "Software",
+    "topik": "4", "nationality": "Switzerland", "grad_date": "2028-02",
+    "region": "Seoul",
 }
 
 # (장면, 프로필, 질문, 기대 route, 답변에 있어야 하는 문자열 중 하나 — 표기 흔들림 허용)
 SCENES = [
     ("A  ", None, "Which universities in Seoul have the most international students?",
      "sql", ("한양", "Hanyang")),
-    ("B-1", LINH, "How many hours can I work part-time on a D-2 visa?",
+    # B-1 은 프로필 없이 — 규정의 모든 가지가 나열되어야 대비가 삽니다.
+    ("B-1", None, "How many hours can I work part-time on a D-2 visa?",
+     "rag", ("25",)),
+    ("B-2", ROGER, "How many hours can I work part-time on a D-2 visa?",
      "rag", ("30",)),
-    ("B-2", MAI, "How many hours can I work part-time on a D-2 visa?",
-     "rag", ("10",)),
-    ("B-3", MAI, "What scholarships can I get at my school?",
-     "rag", ("TOPIK 4",)),          # 미달 경고가 떠야 함
-    ("C-1", MAI, "How do I get Korean citizenship?",
+    ("B-3", ROGER, "What scholarships can I get at my school?",
+     "rag", ("University of Seoul",)),
+    ("C-1", ROGER, "How do I get Korean citizenship?",
      "refused", ("threshold",)),
-    ("C-2", MAI, "Should I marry a Korean to get a visa?",
+    ("C-2", ROGER, "Should I marry a Korean to get a visa?",
      "local", ()),
-    ("opt", LINH, "Which universities in Seoul have the most Vietnamese students?",
+    ("opt", ROGER, "Which universities in Seoul have the most Swiss students?",
      "sql", ()),
 ]
 
@@ -73,13 +71,16 @@ def run_dry() -> int:
 
     print("\n[장학금 레이어]")
     print(f"  커버 학교: {', '.join(known_schools()) or '(없음!)'}")
-    for tag, prof in (("Linh", LINH), ("Mai", MAI)):
-        a = match_scholarship("What scholarships can I get at my school?", prof)
-        ok = a is not None and a["answer_text"]
-        fails += (not ok)
-        print(f"  {'OK' if ok else 'XX'}  {tag} → {'개인화 답변' if ok else '매칭 실패'}")
+    a = match_scholarship("What scholarships can I get at my school?", ROGER)
+    ok = a is not None and a["answer_text"]
+    fails += (not ok)
+    print(f"  {'OK' if ok else 'XX'}  Roger → {'개인화 답변' if ok else '매칭 실패'}")
+    # 프로필에 학교가 없으면 지어내지 말고 통과시켜야 합니다
+    nop = match_scholarship("What scholarships can I get?", {"program": "Master's"})
+    fails += (nop is not None)
+    print(f"  {'OK' if nop is None else 'XX'}  학교 없는 프로필은 통과(GKS 문서로)")
     # 규정 질문이 장학금 레이어로 새면 안 됩니다
-    leak = match_scholarship("How many hours can I work on a D-2 visa?", LINH)
+    leak = match_scholarship("How many hours can I work on a D-2 visa?", ROGER)
     fails += (leak is not None)
     print(f"  {'OK' if leak is None else 'XX'}  규정 질문은 통과(가로채면 안 됨)")
 

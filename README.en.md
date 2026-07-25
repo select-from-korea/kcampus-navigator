@@ -2,7 +2,7 @@
 
 **English** · [한국어](./README.md)
 
-A decision-support system for international students considering study in Korea. **Ask in English**: numeric questions are answered by **SQL** over public datasets, and rules questions are answered by **RAG** over government documents — always **with a source**. Aggregation, ranking, and comparison — which vector search structurally cannot do — are routed to SQL. And when no evidence clears the confidence threshold, the system **refuses instead of generating an answer (abstention)**, because visa and immigration rules are a domain where one wrong answer can put a person at real risk. A 2026 BIGDATA-USC Conference Hackathon project by team `SELECT * FROM Korea`.
+A decision-support system for international students considering study in Korea. **Ask in English**: numeric questions are answered by **SQL** over public datasets, and rules questions are answered by **RAG** over government documents — always **with a source**. Aggregation, ranking, and comparison — which vector search structurally cannot do — are routed to SQL. And when no evidence clears the confidence threshold, the system **refuses instead of generating an answer (abstention)**, because visa and immigration rules are a domain where one wrong answer can put a person at real risk. A 2026 BIGDATA-USC Conference Hackathon project by Team 12 `SELECT * FROM Korea`; presented as **Kcampus Navigator**.
 
 ## Tech stack
 
@@ -43,7 +43,7 @@ python src/loader.py              # docs/*.md → data/processed/vectors.npz (se
 streamlit run app.py              # demo UI (default port 8501)
 ```
 
-> `app.py` imports the real pipeline: `from src.pipeline import answer_question, baseline_answer, ungrounded_answer`. To preview the UI without a backend, swap the first import for `from mock import answer_question` (same signature).
+> `app.py` imports the real pipeline: `from src.pipeline import answer_question, ungrounded_answer`. To preview the UI without a backend, swap the first import for `from mock import answer_question` (same signature).
 > The built `vectors.npz` and `kcampus.db` are committed, so you can skip the `build_db` / `loader` steps.
 
 ## Interface overview
@@ -62,7 +62,7 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 |---|---|---|---|
 | `question` | string | yes | User question, in English (or `lang`) |
 | `lang` | string | no | Answer language. Default `"en"` (`ko`, `zh` supported) |
-| `profile` | dict | no | Optional `{visa, program, school, topik, nationality, grad_date, region}` — personalizes rules and scholarship answers to this student. Backward compatible. |
+| `profile` | dict | no | Optional `{visa, program, school, major, topik, nationality, grad_date, region}` — personalizes rules and scholarship answers to this student. Backward compatible. |
 
 Each question first passes through **two curated layers** — My School (scholarships) and the Sunbae Lounge (campus life) — which intercept the questions public data cannot answer; otherwise the **router** classifies it into one of the routes below. `refused` is decided not by the router but at the **retrieval stage**, when confidence falls below the threshold.
 
@@ -79,19 +79,19 @@ Each question first passes through **two curated layers** — My School (scholar
 
 In a sensitive domain like visas, a generic LLM answers confidently from **knowledge frozen at its training cutoff**, with no source — even when it's wrong. Four mechanisms set this system apart.
 
-- **Contrastive demo** — `ungrounded_answer()`: the LLM asked the raw question with **no document context** (a "no-source" answer). The `🆚 Compare` toggle shows it **side by side** with our answer (cited or refused), so the product proves the value of grounding itself. (Measured: "How many hours on a D-2?" → generic AI says "20 hours" [wrong] vs ours "25/30 hours" [Ministry of Justice manual].)
+- **Contrastive demo** — `ungrounded_answer()`: the LLM asked the raw question with **no document context** (a "no-source" answer). The `🆚 Compare` toggle shows it **side by side** with our answer (cited or refused), so the product proves the value of grounding itself. (Measured: "How many hours on a D-2?" → generic AI says "20 hours" [wrong] vs ours "25/30 hours" [Ministry of Justice manual].) (A routing-free, abstention-free pure-vector control, `baseline_answer()`, is still in the code but was cut from the demo UI — it doesn't fit a 5-minute slot.)
 - **Freshness** — every grounded answer ends with the source's **as-of date** and a note to "confirm the current rule at HiKorea ☎1345, because rules change." A generic AI structurally cannot tell you whether its answer is current.
 - **Smart abstention** — when there's no evidence, instead of a dead-end "no answer" it points to the closest **official topic** and the **right office** (HiKorea / your international office).
 - **Personalization** — `answer_question(q, profile=...)`: given visa, degree program, school, TOPIK level, nationality, or graduation date, it selects the **branch of the rule that applies to this student** from the source. It *selects* values from the document; it never invents them. Enter it via `🧑‍🎓 My profile`, or switch the whole profile at once with the **demo persona dropdown**.
 
-  The same question — `How many hours can I work part-time on a D-2 visa?` — splits on the profile (measured):
+  The same question — `How many hours can I work part-time on a D-2 visa?` — splits on whether a profile is attached (measured):
 
-  | Persona | Profile | Answer |
-  |---|---|---|
-  | **Linh** | University of Seoul · Master's · TOPIK 4 | **30 hours / week** |
-  | **Mai** | Sookmyung · Undergraduate (3-4yr) · TOPIK 2 | **10 hours / week** (below the language requirement) |
+  | Profile | Answer |
+  |---|---|
+  | none | **every branch** of the rule — 25h undergrad / 30h graduate / 30–35h with excellent grades / 10–15h below the language requirement. Correct, and useless for deciding what *you* may do |
+  | **Roger** (University of Seoul · Master's · TOPIK 4) | **"30 hours per week"** — only the branch that applies to him |
 
-  The two personas share nationality and visa and differ **only** in school, degree level and TOPIK — so the profile is visibly the reason the answer changes.
+  Same question, same document. Only the profile changed — and the values are *selected* from the document, never invented.
 - **My School scholarships** — scholarships appear in neither the government corpus nor the public statistics (each university posts its own notice), so we built the structured data ourselves (`docs/scholarships.json`). Matched against the profile, it splits into **"you can apply now / needs TOPIK 4, you have 2 / depends on your GPA"**, and for a school we don't cover it **invents nothing** — it falls back to the national scholarship (GKS) documents. Current coverage: **University of Seoul and Sookmyung** (adding a school is one JSON entry, no code change).
 
 ### Response schema (`Answer`)
@@ -169,27 +169,29 @@ Request: `answer_question("Should I marry a Korean to get a visa?")` — a grayz
 
 ### Example — My School scholarships (`rag`, curated)
 
-Request: `answer_question("What scholarships can I get at my school?", profile={"school": "Sookmyung Women's University (숙명여자대학교)", "program": "Undergraduate (3-4yr)", "topik": "2"})`
+Request: `answer_question("What scholarships can I get at my school?", profile={"school": "University of Seoul (서울시립대학교)", "program": "Master's", "topik": "4"})`
 
 ```
-### Scholarships at Sookmyung Women's University (숙명여자대학교)
-Matched to your profile — Undergraduate (3-4yr) · TOPIK 2.
+### Scholarships at University of Seoul (서울시립대학교)
+Matched to your profile — Master's · TOPIK 4.
 
 **You are eligible to apply for:**
-- Global Admission Scholarship (외국인 입학장학금) — 30–70% of tuition*
-- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+- International Student Admission Scholarship (외국인 신입생 입학장학금) — 30–100% of tuition*
+- Korean Proficiency (TOPIK) Scholarship (한국어능력 우수 장학금) — partial tuition*
+  ✅ you hold TOPIK 4 ≥ 4
+- Graduate Research / Teaching Assistantship (RA·TA) — stipend + tuition support*
 
-**Not yet — one condition short:**
-- TOPIK Level Scholarship (한국어능력(TOPIK) 장학금) — partial tuition*
-  ⚠️ needs TOPIK 4 — you have TOPIK 2
+**Depends on something we don't know about you:**
+- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+  ℹ️ depends on your GPA — needs 3.5+ last semester, which your profile doesn't include
 
 🗓 Curated from the university's own scholarship notice, as of 2026-07-25 ...
 ```
 
-> Ask the same question as a University of Seoul Master's student with TOPIK 4 and the TOPIK
-> scholarship flips to **✅ eligible**. The verdict comes from comparing the profile against the
-> conditions in `docs/scholarships.json` (`levels` · `topik_min` · `gpa_min`) — no LLM writes
-> these sentences.
+> Ask the same question with TOPIK 2 and that TOPIK scholarship flips to
+> `⚠️ needs TOPIK 4 — you have TOPIK 2`. The verdict comes from comparing the profile against
+> the conditions in `docs/scholarships.json` (`levels` · `topik_min` · `gpa_min`) — no LLM
+> writes these sentences.
 
 ### Example — refusal (`refused`)
 
@@ -227,7 +229,7 @@ kcampus-navigator/
 ├── docs/
 │   ├── local_tips.json    # 21 curated Sunbae Lounge tips (not regulations; life/culture/bureaucracy)
 │   ├── scholarships.json  # curated per-school scholarships (University of Seoul, Sookmyung)
-│   ├── 05_architecture_diagram.svg/.png   # slide 5 architecture (use the PNG in Slides)
+│   ├── 05_architecture_diagram.svg/.png   # drop-in replacement for the deck's "How It Works" slide
 │   └── *.md               # RAG corpus: 46 government regulation docs + presentation material
 ├── data/
 │   ├── raw/               # original public-data CSV

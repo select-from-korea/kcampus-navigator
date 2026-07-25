@@ -134,6 +134,7 @@ def _profile_block(profile: dict | None) -> str:
         ("visa", "Visa / stay status"),
         ("program", "Degree program"),
         ("school", "University"),
+        ("major", "Field of study"),
         ("topik", "TOPIK level"),
         ("nationality", "Nationality"),
         ("grad_date", "Expected graduation"),
@@ -367,7 +368,11 @@ def _sql_answer(question: str, lang: str) -> Answer:
 # =================================================================
 
 def baseline_answer(question: str, lang: str = "en") -> Answer:
-    """발표 슬라이드 4 장면 A — "일반 RAG 챗봇" 실패 시연용.
+    """대조군 2 — "라우팅 없는 순수 RAG 챗봇" 실패 재현용.
+
+    ⚠️ 라이브 데모 UI 에서는 제거했습니다(5분 안에 들어가지 않고, 대조는
+    ungrounded_answer 하나로 충분). 코드로는 그대로 재현 가능하며 Q&A 에서
+    "벡터 검색이 왜 집계를 못 하나" 를 물으면 이걸 돌려 보여줄 수 있습니다.
 
     라우팅도 SQL도 Abstention도 없이, 순수 벡터(dense) 검색만 수행해 최상위
     문단을 그대로 돌려줍니다. 정량형 질문(예: "서울에서 유학생이 가장 많은
@@ -400,8 +405,8 @@ def answer_question(question: str, lang: str = "en",
                     profile: dict | None = None) -> Answer:
     """프론트가 호출하는 유일한 진입점.
 
-    profile(선택): {visa, program, school, topik, nationality, grad_date,
-    region} 중 채워진 것만. 규정(rag/hybrid) 답변을 그 학생 기준으로
+    profile(선택): {visa, program, school, major, topik, nationality,
+    grad_date, region} 중 채워진 것만. 규정(rag/hybrid) 답변을 그 학생 기준으로
     맞춤화합니다. 기존 호출부는 profile 없이 그대로 동작합니다(하위호환).
     """
     if not question or not question.strip():

@@ -2,7 +2,7 @@
 
 [English](./README.en.md) · **한국어**
 
-한국 유학을 고려하는 외국인 학생이 **영어로 질문하면**, 숫자 질문은 **SQL**로 공공데이터를 조회하고 규정 질문은 **RAG**로 정부 문서를 검색해 **출처와 함께** 답하는 의사결정 지원 시스템입니다. 벡터 검색이 구조적으로 할 수 없는 집계·순위·비교는 라우터가 SQL 경로로 보내 처리하며, 근거가 임계값에 못 미치면 **답변을 생성하지 않고 거부** 합니다. 비자·체류 규정은 틀린 답 하나가 사람을 위험에 빠뜨릴 수 있는 도메인이기 때문입니다. `SELECT * FROM Korea` 팀의 2026 BIGDATA-USC Conference Hackathon 프로젝트입니다.
+한국 유학을 고려하는 외국인 학생이 **영어로 질문하면**, 숫자 질문은 **SQL**로 공공데이터를 조회하고 규정 질문은 **RAG**로 정부 문서를 검색해 **출처와 함께** 답하는 의사결정 지원 시스템입니다. 벡터 검색이 구조적으로 할 수 없는 집계·순위·비교는 라우터가 SQL 경로로 보내 처리하며, 근거가 임계값에 못 미치면 **답변을 생성하지 않고 거부** 합니다. 비자·체류 규정은 틀린 답 하나가 사람을 위험에 빠뜨릴 수 있는 도메인이기 때문입니다. Team 12 `SELECT * FROM Korea` 의 2026 BIGDATA-USC Conference Hackathon 프로젝트이며, 발표 제품명은 **Kcampus Navigator** 입니다.
 
 ## 기술 스택
 
@@ -60,7 +60,7 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 |---|---|---|---|
 | `question` | string | 필수 | 사용자 질문. 영어(또는 `lang`) |
 | `lang` | string | 선택 | 답변 언어. 기본 `"en"` (`ko`, `zh` 지원) |
-| `profile` | dict | 선택 | `{visa, program, school, topik, nationality, grad_date, region}` — 규정·장학금 답변을 그 학생 기준으로 맞춤화. 하위호환 |
+| `profile` | dict | 선택 | `{visa, program, school, major, topik, nationality, grad_date, region}` — 규정·장학금 답변을 그 학생 기준으로 맞춤화. 하위호환 |
 
 질문은 먼저 **큐레이션 레이어 두 개**(장학금 → 선배 라운지)가 공공데이터로는 답할 수 없는 질문을 가로채고, 아니면 **라우터**가 아래 경로 중 하나로 분류합니다. `refused` 는 라우터가 아니라 **검색 단계**에서 신뢰도가 임계값 미만일 때 결정됩니다.
 
@@ -77,19 +77,19 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 
 비자·체류처럼 예민한 도메인에서 일반 LLM은 **학습 컷오프에 얼어붙은 지식**으로 출처 없이 자신 있게 답합니다(틀려도). 세 장치로 차별화합니다.
 
-- **대조(contrastive) 데모** — `ungrounded_answer()`: 문서 컨텍스트 없이 LLM 에 그대로 물은 '근거 0' 답변. 데모 UI 의 `🆚 Compare` 토글로 우리 답(인용/거부)과 **나란히** 보여 grounding 의 가치를 제품이 스스로 증명합니다.
+- **대조(contrastive) 데모** — `ungrounded_answer()`: 문서 컨텍스트 없이 LLM 에 그대로 물은 '근거 0' 답변. 데모 UI 의 `🆚 Compare` 토글로 우리 답(인용/거부)과 **나란히** 보여 grounding 의 가치를 제품이 스스로 증명합니다. (라우팅·거부 없는 순수 벡터 검색 대조군 `baseline_answer()` 도 코드에 남아 있으나, 5분 발표에 들어가지 않아 데모 UI 에서는 뺐습니다.)
 - **최신화(freshness)** — 모든 grounded 답변 끝에 근거 문서의 **수집 기준일(as-of)** 과 "규정은 바뀔 수 있으니 하이코리아 ☎1345 로 확인" 안내를 붙입니다. 일반 AI 는 '이게 최신인지' 를 구조적으로 알 수 없습니다.
 - **스마트 거부(smart abstention)** — 근거가 없으면 막다른 "답 없음" 이 아니라, 가장 가까운 **공식 주제**와 **담당 창구(하이코리아·국제교류처)** 를 안내합니다.
 - **개인화(personalization)** — `answer_question(q, profile=...)`: 비자·과정·학교·TOPIK·국적·졸업예정일을 주면, 근거 문서의 **조건별 규정 중 그 학생에게 해당하는 가지**를 골라 답합니다. 값은 문서에서 '선택' 할 뿐 지어내지 않습니다. UI 의 `🧑‍🎓 My profile` 로 입력하거나 **데모 페르소나 드롭다운**으로 한 번에 전환합니다.
 
-  같은 질문 `How many hours can I work part-time on a D-2 visa?` 이 프로필에 따라 갈립니다 (실측):
+  같은 질문 `How many hours can I work part-time on a D-2 visa?` 이 프로필 유무로 갈립니다 (실측):
 
-  | 페르소나 | 프로필 | 답 |
-  |---|---|---|
-  | **Linh** | 서울시립대 · 석사 · TOPIK 4 | **주 30시간** |
-  | **Mai** | 숙명여대 · 학부(3-4년) · TOPIK 2 | **주 10시간** (어학요건 미달 가지) |
+  | 프로필 | 답 |
+  |---|---|
+  | 없음 | 규정의 **모든 가지** 나열 — 학부 25h / 석·박사 30h / 우수자 30·35h / 어학요건 미달 10·15h. 맞지만 자기 답이 뭔지는 알 수 없습니다 |
+  | **Roger** (서울시립대 · 석사 · TOPIK 4) | **"주 30시간"** 한 줄 — *그에게* 해당하는 가지만 |
 
-  두 페르소나는 국적·비자가 같고 **학교·과정·TOPIK 만** 다릅니다 — 답이 갈리는 원인이 프로필임을 분리해 보여주기 위한 설계입니다.
+  같은 질문, 같은 문서입니다. 달라진 건 프로필뿐이고, 값은 문서에서 고를 뿐 지어내지 않습니다.
 - **My School 장학금** — 장학금은 정부 규정 코퍼스에도 공공데이터 통계에도 없습니다(대학이 각자 홈페이지 공지로만 냅니다). 그래서 학교별 구조화 데이터를 직접 만들었습니다(`docs/scholarships.json`). 프로필의 학교·과정·TOPIK 과 대조해 **"지금 지원 가능 / TOPIK 4급 필요(현재 2급) / 성적에 따라 달라짐"** 으로 갈라 보여주고, 커버하지 않는 학교는 **지어내지 않고** 국가장학금(GKS) 문서 경로로 넘깁니다. 현재 커버리지는 **서울시립대·숙명여대 2교** (확장은 JSON 항목 추가만, 코드 수정 없음).
 
 ### 응답 스키마 (`Answer`)
@@ -167,24 +167,26 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 
 ### 예시 — My School 장학금 (`rag`, 큐레이션)
 
-요청: `answer_question("What scholarships can I get at my school?", profile={"school": "Sookmyung Women's University (숙명여자대학교)", "program": "Undergraduate (3-4yr)", "topik": "2"})`
+요청: `answer_question("What scholarships can I get at my school?", profile={"school": "University of Seoul (서울시립대학교)", "program": "Master's", "topik": "4"})`
 
 ```
-### Scholarships at Sookmyung Women's University (숙명여자대학교)
-Matched to your profile — Undergraduate (3-4yr) · TOPIK 2.
+### Scholarships at University of Seoul (서울시립대학교)
+Matched to your profile — Master's · TOPIK 4.
 
 **You are eligible to apply for:**
-- Global Admission Scholarship (외국인 입학장학금) — 30–70% of tuition*
-- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+- International Student Admission Scholarship (외국인 신입생 입학장학금) — 30–100% of tuition*
+- Korean Proficiency (TOPIK) Scholarship (한국어능력 우수 장학금) — partial tuition*
+  ✅ you hold TOPIK 4 ≥ 4
+- Graduate Research / Teaching Assistantship (RA·TA) — stipend + tuition support*
 
-**Not yet — one condition short:**
-- TOPIK Level Scholarship (한국어능력(TOPIK) 장학금) — partial tuition*
-  ⚠️ needs TOPIK 4 — you have TOPIK 2
+**Depends on something we don't know about you:**
+- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+  ℹ️ depends on your GPA — needs 3.5+ last semester, which your profile doesn't include
 
 🗓 Curated from the university's own scholarship notice, as of 2026-07-25 ...
 ```
 
-> 같은 질문을 서울시립대 석사·TOPIK 4 프로필로 물으면 TOPIK 장학금이 **✅ 해당**으로 바뀝니다. 판정은 `docs/scholarships.json` 의 조건(`levels`·`topik_min`·`gpa_min`)과 프로필을 비교할 뿐 — LLM 이 문장을 만들지 않습니다.
+> TOPIK 2급 프로필로 같은 질문을 하면 TOPIK 장학금이 `⚠️ needs TOPIK 4 — you have TOPIK 2` 로 바뀝니다. 판정은 `docs/scholarships.json` 의 조건(`levels`·`topik_min`·`gpa_min`)과 프로필을 비교할 뿐 — LLM 이 문장을 만들지 않습니다.
 
 ### 예시 — 거부 (`refused`)
 
@@ -222,7 +224,7 @@ kcampus-navigator/
 ├── docs/
 │   ├── local_tips.json    # 선배 라운지 큐레이션 팁 21개 (규정 아님, 생활/문화/행정)
 │   ├── scholarships.json  # 학교별 장학금 큐레이션 (서울시립대·숙명여대)
-│   ├── 05_architecture_diagram.svg/.png   # 발표 슬라이드 5 아키텍처 (Slides 삽입은 PNG)
+│   ├── 05_architecture_diagram.svg/.png   # 발표 덱 "How It Works" 교체용 (Slides 삽입은 PNG)
 │   └── *.md               # RAG 코퍼스: 정부 규정 문서 46개 + 발표 자료
 ├── data/
 │   ├── raw/               # 원본 공공데이터 CSV

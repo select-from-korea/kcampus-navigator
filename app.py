@@ -1,22 +1,25 @@
 import streamlit as st
 import pandas as pd
-from src.pipeline import answer_question, baseline_answer, ungrounded_answer  # 실제 파이프라인
+from src.pipeline import answer_question, ungrounded_answer  # 실제 파이프라인
 from src.scholarships import known_schools
 # 목업으로 UI만 볼 때는 위 줄 대신: from mock import answer_question
 
 # ============================================================
-# 데모 시나리오 (발표_슬라이드_구성 기준)
+# 데모 시나리오 (발표 덱 슬라이드 5 'Live Demo' · 대본 v7 기준)
+# 검증: python eval/demo_check.py  → 7장면 route 확인 (현재 7/7)
 # ------------------------------------------------------------
 # A(대조)     : "🆚 Compare" 체크 → 근거 없는 일반 AI vs 우리(인용/거부) 나란히
 #               "Which universities in Seoul have the most international students?"
-# B(개인화)   : 페르소나 Linh(석사·TOPIK4) → 30h / Mai(학부·TOPIK2) → 10h
-#               ② "What scholarships can I get at my school?" → 학교별 분기
+# B(개인화)   : 프로필 없음 → 규정의 모든 가지(25/30/35/10/15h) 나열
+#               페르소나 Roger 적용 → "30 hours" 한 줄
+#               ② "What scholarships can I get at my school?" → 서울시립대 맞춤
 # C(거부/구제): "How do I get Korean citizenship?" → 거부
 #               "Should I marry a Korean to get a visa?" → 선배 라운지
 # ============================================================
 
-st.set_page_config(page_title="K-Campus Navigator", layout="centered")
-st.title("K-Campus Navigator")
+# 표기는 발표 덱과 통일: "Kcampus Navigator"
+st.set_page_config(page_title="Kcampus Navigator", layout="centered")
+st.title("Kcampus Navigator")
 st.caption(
     "Grounded visa & campus guidance for international students in Korea — "
     "cited from official sources, or it refuses. It won't guess."
@@ -30,27 +33,24 @@ if "result" not in st.session_state:
     st.session_state.profile = None
 
 # ============================================================
-#  데모 페르소나 — 같은 질문이 프로필에 따라 다르게 답하는 것을 라이브로
-#  보여주기 위한 원클릭 프리셋. 두 학생은 국적이 같고 학교·과정·TOPIK 만
-#  다릅니다 → 답이 갈리는 원인이 프로필이라는 게 한눈에 보입니다.
-#  (발표 중 타이핑은 사고의 근원이라 드롭다운 하나로 끝냅니다.)
+#  데모 페르소나 — 발표용 원클릭 프리셋. 같은 질문을 프로필 없이 한 번,
+#  Roger 로 한 번 던지면 답이 갈립니다:
+#    프로필 없음 → 규정의 모든 가지 나열 (25/30/35/10/15시간 — 맞지만 쓸모없음)
+#    Roger      → "주 30시간" 한 줄 (그에게 해당하는 가지)
+#  발표 중 프로필 6칸을 손으로 채우면 20초가 날아가므로 드롭다운으로 끝냅니다.
 # ============================================================
 
 PERSONAS = {
     "— no profile (generic student) —": {},
-    "🎓 Linh · Master's @ University of Seoul · TOPIK 4": {
+    "🎓 Roger · 24 · Software Master's @ University of Seoul": {
         "visa": "D-2 (student)", "program": "Master's",
-        "school": "University of Seoul (서울시립대학교)", "topik": "4",
-        "nationality": "Vietnam", "grad_date": "2027-02", "region": "Seoul",
-    },
-    "🎓 Mai · Undergrad (3-4yr) @ Sookmyung · TOPIK 2": {
-        "visa": "D-2 (student)", "program": "Undergraduate (3-4yr)",
-        "school": "Sookmyung Women's University (숙명여자대학교)", "topik": "2",
-        "nationality": "Vietnam", "grad_date": "2028-02", "region": "Seoul",
+        "school": "University of Seoul (서울시립대학교)", "major": "Software",
+        "topik": "4", "nationality": "Switzerland", "grad_date": "2028-02",
+        "region": "Seoul",
     },
 }
 
-_FIELD_KEYS = ("visa", "program", "school", "topik",
+_FIELD_KEYS = ("visa", "program", "school", "major", "topik",
                "nationality", "grad_date", "region")
 
 persona = st.selectbox("🧑‍🎓 Demo persona", list(PERSONAS), key="persona_name")
@@ -74,40 +74,41 @@ with st.form(key="ask_form"):
             visa = st.selectbox("Visa / stay status",
                                 ["", "D-2 (student)", "D-4 (trainee)", "D-10 (job-seeking)",
                                  "E-7 (work)", "Other"], key="p_visa")
-            nationality = st.text_input("Nationality", placeholder="e.g. Vietnam",
+            nationality = st.text_input("Nationality", placeholder="e.g. Switzerland",
                                         key="p_nationality")
         with p2:
             program = st.selectbox("Degree program",
                                    ["", "Undergraduate (1-2yr)", "Undergraduate (3-4yr)",
                                     "Master's", "Ph.D.", "Language course"], key="p_program")
-            grad_date = st.text_input("Expected graduation", placeholder="e.g. 2027-02",
-                                      key="p_grad_date")
+            major = st.text_input("Field of study", placeholder="e.g. Software",
+                                  key="p_major")
         with p3:
             topik = st.selectbox("TOPIK level", ["", "None", "1", "2", "3", "4", "5", "6"],
                                  key="p_topik")
             region = st.text_input("Region in Korea", placeholder="e.g. Seoul",
                                    key="p_region")
         # 학교 — 장학금처럼 '학교만 아는' 정보를 개인화하는 키입니다.
-        school = st.selectbox(
-            "University", _SCHOOL_OPTIONS, key="p_school",
-            help="Scholarship answers are personalized for the schools we have "
-                 "curated data for. Other schools fall back to national scholarships.",
-        )
+        p4, p5 = st.columns(2)
+        with p4:
+            school = st.selectbox(
+                "University", _SCHOOL_OPTIONS, key="p_school",
+                help="Scholarship answers are personalized for the schools we have "
+                     "curated data for. Other schools fall back to national scholarships.",
+            )
+        with p5:
+            grad_date = st.text_input("Expected graduation", placeholder="e.g. 2028-02",
+                                      key="p_grad_date")
 
-    col_a, col_b = st.columns(2)
-    with col_a:
-        # 발표 장면 A: 근거 없는 일반 AI(=Claude/ChatGPT 식)와 우리를 나란히 비교
-        compare = st.checkbox("🆚 Compare with a generic AI (no sources)")
-    with col_b:
-        # 순수 벡터검색(라우팅·SQL·거부 없음) 실패 시연 토글
-        baseline = st.checkbox("🔬 Baseline: pure vector search")
+    # 발표 장면 A: 근거 없는 일반 AI(=Claude/ChatGPT 식)와 우리를 나란히 비교
+    compare = st.checkbox("🆚 Compare with a generic AI (no sources)")
     submitted = st.form_submit_button("Ask")
 
 if submitted and question.strip():
     # 채워진 항목만 프로필로 (빈 문자열 제외)
     profile = {k: v for k, v in {
-        "visa": visa, "program": program, "school": school, "topik": topik,
-        "nationality": nationality, "grad_date": grad_date, "region": region,
+        "visa": visa, "program": program, "school": school, "major": major,
+        "topik": topik, "nationality": nationality, "grad_date": grad_date,
+        "region": region,
     }.items() if v and str(v).strip() and v != "Other / not listed"}
     profile = profile or None
     st.session_state.profile = profile
@@ -117,10 +118,6 @@ if submitted and question.strip():
             st.session_state.mode = "compare"
             st.session_state.ungrounded = ungrounded_answer(question, profile=profile)["text"]
             st.session_state.result = answer_question(question, profile=profile)
-        elif baseline:
-            st.session_state.mode = "single"
-            st.session_state.ungrounded = None
-            st.session_state.result = baseline_answer(question)
         else:
             st.session_state.mode = "single"
             st.session_state.ungrounded = None
@@ -239,7 +236,7 @@ if result is not None:
             )
             st.warning(st.session_state.ungrounded)
         with right:
-            st.markdown("#### 🎓 K-Campus Navigator · grounded")
+            st.markdown("#### 🎓 Kcampus Navigator · grounded")
             st.caption("Cited from dated official sources — or it refuses.")
             render_answer(result, compact=True)
     else:

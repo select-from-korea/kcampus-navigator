@@ -86,7 +86,8 @@ VALUES ARE KOREAN. Translate English filters to the exact Korean literal:
     울산=Ulsan, 세종=Sejong, 경기=Gyeonggi, 강원=Gangwon, 충북/충남=North/South Chungcheong,
     전북/전남=North/South Jeolla, 경북/경남=North/South Gyeongsang, 제주=Jeju
   nationalities: 중국=China, 베트남=Vietnam, 몽골=Mongolia, 우즈베키스탄=Uzbekistan,
-    네팔=Nepal, 미얀마=Myanmar, 일본=Japan, 미국=USA, 인도=India, 러시아(연방)=Russia
+    네팔=Nepal, 미얀마=Myanmar, 일본=Japan, 미국=USA, 인도=India, 러시아(연방)=Russia,
+    스위스=Switzerland, 프랑스=France, 독일=Germany
     (for others use the standard Korean country name)
   visa_status literals: '학사과정'(bachelor), '석사과정'(master), '박사과정'(doctoral),
     '전문학사과정'(associate), '교환학생'(exchange), '대학부설 어학원 연수'(language training),
