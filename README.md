@@ -60,12 +60,13 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 |---|---|---|---|
 | `question` | string | 필수 | 사용자 질문. 영어(또는 `lang`) |
 | `lang` | string | 선택 | 답변 언어. 기본 `"en"` (`ko`, `zh` 지원) |
-| `profile` | dict | 선택 | `{visa, program, topik, nationality, grad_date, region}` — 규정 답변을 그 학생 기준으로 맞춤화. 하위호환 |
+| `profile` | dict | 선택 | `{visa, program, school, topik, nationality, grad_date, region}` — 규정·장학금 답변을 그 학생 기준으로 맞춤화. 하위호환 |
 
-질문은 먼저 **선배 라운지** 레이어가 캠퍼스 생활·문화·행정 팁을 가로채고(매칭 시 `local`), 아니면 **라우터**가 아래 경로 중 하나로 분류합니다. `refused` 는 라우터가 아니라 **검색 단계**에서 신뢰도가 임계값 미만일 때 결정됩니다.
+질문은 먼저 **큐레이션 레이어 두 개**(장학금 → 선배 라운지)가 공공데이터로는 답할 수 없는 질문을 가로채고, 아니면 **라우터**가 아래 경로 중 하나로 분류합니다. `refused` 는 라우터가 아니라 **검색 단계**에서 신뢰도가 임계값 미만일 때 결정됩니다.
 
 | route | 언제 | 처리 |
 |---|---|---|
+| `rag` (My School) | 장학금 질문 + 프로필에 큐레이션된 학교 | `docs/scholarships.json` 에서 그 학교 장학금을 뽑아 **과정·TOPIK 요건과 대조** → '지금 해당 / 요건 미달 / 정보 부족' 으로 분류해 제시. LLM 생성 없음(할루시네이션 0), 학교 공지 링크·기준일 첨부. 모르는 학교면 통과시켜 정부 문서(GKS)로 |
 | `local` | 캠퍼스 생활·문화·행정 꿀팁 (정부 문서로는 답할 수 없음) | 2단계 매칭 → '선배' 페르소나 답변 (할루시네이션 0). ① 키워드: 라우터 前 `docs/local_tips.json` 트리거 매칭 ② 의미: RAG 가 거부하려는 순간 임베딩으로 가장 가까운 팁 구제 |
 | `sql` | 개수·순위·비교·집계 | Text-to-SQL → 표 + 막대차트 |
 | `rag` | 규정·절차·자격 | 질의 한국어 번역 → 하이브리드 검색(BM25+Dense) → 출처 인용 답변 |
@@ -79,7 +80,17 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 - **대조(contrastive) 데모** — `ungrounded_answer()`: 문서 컨텍스트 없이 LLM 에 그대로 물은 '근거 0' 답변. 데모 UI 의 `🆚 Compare` 토글로 우리 답(인용/거부)과 **나란히** 보여 grounding 의 가치를 제품이 스스로 증명합니다.
 - **최신화(freshness)** — 모든 grounded 답변 끝에 근거 문서의 **수집 기준일(as-of)** 과 "규정은 바뀔 수 있으니 하이코리아 ☎1345 로 확인" 안내를 붙입니다. 일반 AI 는 '이게 최신인지' 를 구조적으로 알 수 없습니다.
 - **스마트 거부(smart abstention)** — 근거가 없으면 막다른 "답 없음" 이 아니라, 가장 가까운 **공식 주제**와 **담당 창구(하이코리아·국제교류처)** 를 안내합니다.
-- **개인화(personalization)** — `answer_question(q, profile=...)`: 비자·과정·TOPIK·국적·졸업예정일을 주면, 근거 문서의 **조건별 규정 중 그 학생에게 해당하는 가지**(예: 석사·TOPIK4 → 주 30시간)를 골라 답합니다. 값은 문서에서 '선택' 할 뿐 지어내지 않습니다. 일반 AI 는 당신의 개인 상황을 모릅니다. UI 의 `🧑‍🎓 My profile` 로 입력.
+- **개인화(personalization)** — `answer_question(q, profile=...)`: 비자·과정·학교·TOPIK·국적·졸업예정일을 주면, 근거 문서의 **조건별 규정 중 그 학생에게 해당하는 가지**를 골라 답합니다. 값은 문서에서 '선택' 할 뿐 지어내지 않습니다. UI 의 `🧑‍🎓 My profile` 로 입력하거나 **데모 페르소나 드롭다운**으로 한 번에 전환합니다.
+
+  같은 질문 `How many hours can I work part-time on a D-2 visa?` 이 프로필에 따라 갈립니다 (실측):
+
+  | 페르소나 | 프로필 | 답 |
+  |---|---|---|
+  | **Linh** | 서울시립대 · 석사 · TOPIK 4 | **주 30시간** |
+  | **Mai** | 숙명여대 · 학부(3-4년) · TOPIK 2 | **주 10시간** (어학요건 미달 가지) |
+
+  두 페르소나는 국적·비자가 같고 **학교·과정·TOPIK 만** 다릅니다 — 답이 갈리는 원인이 프로필임을 분리해 보여주기 위한 설계입니다.
+- **My School 장학금** — 장학금은 정부 규정 코퍼스에도 공공데이터 통계에도 없습니다(대학이 각자 홈페이지 공지로만 냅니다). 그래서 학교별 구조화 데이터를 직접 만들었습니다(`docs/scholarships.json`). 프로필의 학교·과정·TOPIK 과 대조해 **"지금 지원 가능 / TOPIK 4급 필요(현재 2급) / 성적에 따라 달라짐"** 으로 갈라 보여주고, 커버하지 않는 학교는 **지어내지 않고** 국가장학금(GKS) 문서 경로로 넘깁니다. 현재 커버리지는 **서울시립대·숙명여대 2교** (확장은 JSON 항목 추가만, 코드 수정 없음).
 
 ### 응답 스키마 (`Answer`)
 
@@ -154,6 +165,27 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 }
 ```
 
+### 예시 — My School 장학금 (`rag`, 큐레이션)
+
+요청: `answer_question("What scholarships can I get at my school?", profile={"school": "Sookmyung Women's University (숙명여자대학교)", "program": "Undergraduate (3-4yr)", "topik": "2"})`
+
+```
+### Scholarships at Sookmyung Women's University (숙명여자대학교)
+Matched to your profile — Undergraduate (3-4yr) · TOPIK 2.
+
+**You are eligible to apply for:**
+- Global Admission Scholarship (외국인 입학장학금) — 30–70% of tuition*
+- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+
+**Not yet — one condition short:**
+- TOPIK Level Scholarship (한국어능력(TOPIK) 장학금) — partial tuition*
+  ⚠️ needs TOPIK 4 — you have TOPIK 2
+
+🗓 Curated from the university's own scholarship notice, as of 2026-07-25 ...
+```
+
+> 같은 질문을 서울시립대 석사·TOPIK 4 프로필로 물으면 TOPIK 장학금이 **✅ 해당**으로 바뀝니다. 판정은 `docs/scholarships.json` 의 조건(`levels`·`topik_min`·`gpa_min`)과 프로필을 비교할 뿐 — LLM 이 문장을 만들지 않습니다.
+
 ### 예시 — 거부 (`refused`)
 
 요청: `answer_question("How do I get Korean citizenship?")` — 코퍼스(D-2 유학생 중심)에 근거 문서가 없어 거부하고, 담당 창구를 안내합니다.
@@ -176,7 +208,7 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 kcampus-navigator/
 ├── contract.py            # 프론트↔백엔드 인터페이스 계약 (Answer 스키마)
 ├── mock.py                # 프론트 개발용 목업
-├── app.py                 # Streamlit 데모 UI
+├── app.py                 # Streamlit 데모 UI (대조 뷰 · 페르소나 전환 · 선배 라운지 카드)
 ├── src/
 │   ├── router.py          # 질문 분류: sql / rag / hybrid (LLM + 키워드 폴백)
 │   ├── vector_store.py    # OpenAI 임베딩 + numpy 코사인 검색 + 한국어 질의 번역
@@ -185,9 +217,12 @@ kcampus-navigator/
 │   ├── build_db.py        # 공공데이터 CSV → SQLite(kcampus.db)
 │   ├── sql_chain.py       # Text-to-SQL (값 한국어 용어집 + 실패 시 self-repair)
 │   ├── local.py           # 선배 라운지: 로컬 생활·문화 팁 매칭 (라우터 前 실행)
+│   ├── scholarships.py    # My School: 학교별 장학금 개인화 (라우터 前 실행)
 │   └── pipeline.py        # 전체 조립: answer_question() 진입점
 ├── docs/
 │   ├── local_tips.json    # 선배 라운지 큐레이션 팁 21개 (규정 아님, 생활/문화/행정)
+│   ├── scholarships.json  # 학교별 장학금 큐레이션 (서울시립대·숙명여대)
+│   ├── 05_architecture_diagram.svg/.png   # 발표 슬라이드 5 아키텍처 (Slides 삽입은 PNG)
 │   └── *.md               # RAG 코퍼스: 정부 규정 문서 46개 + 발표 자료
 ├── data/
 │   ├── raw/               # 원본 공공데이터 CSV
@@ -203,11 +238,13 @@ kcampus-navigator/
 python src/pipeline.py                     # 경로별 스모크 테스트
 python src/local.py                        # 선배 라운지 키워드 스모크 (무API)
 python src/local.py --semantic             # 선배 라운지 의미 매칭 스모크 (API 필요)
+python src/scholarships.py                 # My School 장학금 분기 스모크 (무API)
 python src/router.py eval/questions.csv    # 라우터 분류 정확도 (29/30)
 python eval/run_eval.py                    # 검색 재보정 (브릿지·전략·임계값 스윕)
 python eval/sql_eval.py                     # SQL 정답 정확도 (--dry 는 무API 스키마 가드)
+python eval/demo_check.py                  # 발표 프리플라이트: 데모 7장면 route 검증 (--dry 는 무API)
 ```
 
 ## 데이터 출처
 
-모든 규정 문서는 한국 정부 공식 출처입니다 — 하이코리아(hikorea.go.kr), 법무부 출입국·외국인정책본부 자격별 안내매뉴얼, Study in Korea(국립국제교육원), 국민건강보험공단. 대학 통계는 공공데이터(data.go.kr / 대학알리미 계열, 2025)를 사용합니다.
+모든 규정 문서는 한국 정부 공식 출처입니다 — 하이코리아(hikorea.go.kr), 법무부 출입국·외국인정책본부 자격별 안내매뉴얼, Study in Korea(국립국제교육원), 국민건강보험공단. 대학 통계는 공공데이터(data.go.kr / 대학알리미 계열, 2025)를 사용합니다. 학교별 장학금은 각 대학 장학 공지에서 직접 큐레이션했으며(`docs/scholarships.json`), 금액·구간은 학기마다 대학이 정하므로 답변에 큐레이션 기준일과 국제교류처 확인 안내를 함께 노출합니다.

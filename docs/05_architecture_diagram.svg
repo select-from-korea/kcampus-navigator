@@ -1,0 +1,121 @@
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="40" y="58" font-size="34" font-weight="800" fill="#111827">One question, six paths — and every path ends in a source</text>
+  <text x="40" y="92" font-size="18" fill="#6B7280">Two curated layers answer what public data cannot. The router splits the rest into <tspan font-weight="700" fill="#374151">numbers</tspan> and <tspan font-weight="700" fill="#374151">rules</tspan>. Nothing clears the bar → we refuse.</text>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9CA3AF"/>
+    </marker>
+    <marker id="arrowDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#374151"/>
+    </marker>
+  </defs>
+
+  <!-- ============ QUESTION ============ -->
+  <g>
+    <rect x="40" y="150" width="150" height="86" rx="12" fill="#111827"/>
+    <text x="115" y="185" font-size="17" font-weight="800" fill="#FFFFFF" text-anchor="middle">QUESTION</text>
+    <text x="115" y="210" font-size="13" fill="#D1D5DB" text-anchor="middle">in English</text>
+    <text x="115" y="228" font-size="13" fill="#D1D5DB" text-anchor="middle">+ my profile</text>
+  </g>
+  <path d="M 190 193 H 236" stroke="#374151" stroke-width="2.5" marker-end="url(#arrowDark)"/>
+
+  <!-- ============ CURATED LAYERS (before the router) ============ -->
+  <rect x="240" y="118" width="300" height="200" rx="14" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5"/>
+  <text x="258" y="144" font-size="13" font-weight="800" fill="#9A3412" letter-spacing="0.5">CURATED LAYERS · we built this data</text>
+
+  <!-- My School -->
+  <g>
+    <rect x="256" y="156" width="268" height="60" rx="10" fill="#FFFFFF" stroke="#FDBA74" stroke-width="1.5"/>
+    <text x="272" y="180" font-size="16" font-weight="800" fill="#C2410C">🏫 My School</text>
+    <text x="272" y="202" font-size="13" fill="#7C2D12">scholarships — matched to my school · degree · TOPIK</text>
+  </g>
+  <!-- Sunbae -->
+  <g>
+    <rect x="256" y="224" width="268" height="60" rx="10" fill="#FFFFFF" stroke="#FDBA74" stroke-width="1.5"/>
+    <text x="272" y="248" font-size="16" font-weight="800" fill="#C2410C">🎓 Sunbae Lounge</text>
+    <text x="272" y="270" font-size="13" fill="#7C2D12">campus life · culture · gray-zone redirect</text>
+  </g>
+
+  <text x="390" y="306" font-size="12.5" fill="#9A3412" text-anchor="middle">hand-written · no generation · hallucination-free</text>
+
+  <!-- curated → answer (long path along the top) -->
+  <path d="M 540 186 H 1090 V 232" stroke="#F97316" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="800" y="176" font-size="12.5" font-weight="700" fill="#C2410C" text-anchor="middle">matched → answer now, from hand-written data</text>
+
+  <!-- no match → router -->
+  <path d="M 390 318 V 348" stroke="#374151" stroke-width="2.5" marker-end="url(#arrowDark)"/>
+  <text x="406" y="342" font-size="13" font-weight="700" fill="#374151">no match</text>
+
+  <!-- ============ ROUTER ============ -->
+  <g>
+    <rect x="240" y="352" width="300" height="86" rx="12" fill="#111827"/>
+    <text x="390" y="386" font-size="18" font-weight="800" fill="#FFFFFF" text-anchor="middle">ROUTER</text>
+    <text x="390" y="412" font-size="13.5" fill="#D1D5DB" text-anchor="middle">is this a NUMBER or a RULE?</text>
+    <text x="390" y="430" font-size="12" fill="#9CA3AF" text-anchor="middle">LLM classify · keyword fallback if the API dies</text>
+  </g>
+
+  <!-- ============ FOUR PATHS ============ -->
+  <!-- SQL -->
+  <path d="M 540 380 H 604" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="608" y="352" width="292" height="58" rx="10" fill="#EFF4FF" stroke="#BFDBFE" stroke-width="1.5"/>
+    <text x="626" y="376" font-size="15.5" font-weight="800" fill="#1D4ED8">① SQL · 224 universities</text>
+    <text x="626" y="396" font-size="12.5" fill="#3730A3">text-to-SQL over public stats → table + chart</text>
+  </g>
+  <!-- RAG -->
+  <path d="M 540 400 H 570 V 448 H 604" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="608" y="420" width="292" height="58" rx="10" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.5"/>
+    <text x="626" y="444" font-size="15.5" font-weight="800" fill="#047857">② Rules · 46 gov documents</text>
+    <text x="626" y="464" font-size="12.5" fill="#065F46">EN → KO keyword bridge · BM25 + vector</text>
+  </g>
+  <!-- Hybrid -->
+  <path d="M 540 415 H 556 V 516 H 604" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="608" y="488" width="292" height="58" rx="10" fill="#F5F3FF" stroke="#DDD6FE" stroke-width="1.5"/>
+    <text x="626" y="512" font-size="15.5" font-weight="800" fill="#6D28D9">③ Both</text>
+    <text x="626" y="532" font-size="12.5" fill="#5B21B6">a statistic and a rule in one question</text>
+  </g>
+  <!-- Refuse -->
+  <path d="M 540 430 H 546 V 584 H 604" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="608" y="556" width="292" height="58" rx="10" fill="#F5F6F8" stroke="#D1D5DB" stroke-width="1.5"/>
+    <text x="626" y="580" font-size="15.5" font-weight="800" fill="#374151">④ REFUSE</text>
+    <text x="626" y="600" font-size="12.5" fill="#4B5563">best match &lt; 0.42 → no sentence is generated</text>
+  </g>
+
+  <!-- paths → answer -->
+  <path d="M 900 381 H 936" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 900 449 H 936" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 900 517 H 936" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 900 585 H 936" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ THE CONTRACT ============ -->
+  <rect x="940" y="236" width="300" height="378" rx="14" fill="#FFFFFF" stroke="#111827" stroke-width="2"/>
+  <rect x="940" y="236" width="300" height="46" rx="14" fill="#111827"/>
+  <rect x="940" y="264" width="300" height="18" fill="#111827"/>
+  <text x="1090" y="266" font-size="16" font-weight="800" fill="#FFFFFF" text-anchor="middle">ONE CONTRACT</text>
+
+  <text x="962" y="316" font-size="15" font-weight="800" fill="#111827">Every answer carries</text>
+  <text x="962" y="348" font-size="14" fill="#374151">✓ a cited source with a link</text>
+  <text x="962" y="378" font-size="14" fill="#374151">✓ the date it is current as of</text>
+  <text x="962" y="408" font-size="14" fill="#374151">✓ the branch that applies to <tspan font-weight="700">me</tspan></text>
+
+  <line x1="962" y1="432" x2="1218" y2="432" stroke="#E5E7EB" stroke-width="1.5"/>
+
+  <text x="962" y="464" font-size="15" font-weight="800" fill="#111827">…or it says</text>
+  <text x="962" y="500" font-size="26" font-weight="800" fill="#DC2626">“I don't know.”</text>
+  <text x="962" y="530" font-size="13.5" fill="#6B7280">+ the closest official topic</text>
+  <text x="962" y="552" font-size="13.5" fill="#6B7280">+ HiKorea ☎ 1345</text>
+
+  <text x="962" y="592" font-size="12.5" fill="#9CA3AF">A generic chatbot has none of these —</text>
+  <text x="962" y="610" font-size="12.5" fill="#9CA3AF">it cannot cite, date, or know you.</text>
+
+  <!-- Footer -->
+  <text x="40" y="678" font-size="13" fill="#9CA3AF">kcampus-navigator · src/pipeline.py — scholarships → local → router → {sql · rag · hybrid} → abstention at retrieval</text>
+  <text x="1240" y="678" font-size="13" fill="#9CA3AF" text-anchor="end">SELECT * FROM Korea</text>
+</svg>

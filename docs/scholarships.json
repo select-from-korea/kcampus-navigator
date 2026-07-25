@@ -1,0 +1,130 @@
+{
+  "_readme": [
+    "학교별 외국인 유학생 장학금 — 큐레이션 데이터 (선배 라운지와 같은 '손으로 만든 데이터' 계열).",
+    "왜 JSON 인가: 장학금은 정부 규정 코퍼스에도, 공공데이터 통계에도 없습니다.",
+    "  대학마다 자기 홈페이지 공지로만 냅니다. 그래서 RAG 도 SQL 도 답할 수 없고,",
+    "  '학교별 구조화 데이터' 를 우리가 직접 만들어야 개인화가 성립합니다.",
+    "확장 방법: schools 에 항목 하나 추가 = 그 학교 지원 완료 (코드 수정 없음).",
+    "",
+    "⚠️ verify:true 인 금액/비율은 학교 공지 기준 구조이며, 학기마다 바뀝니다.",
+    "   발표 전 source_url 에서 최신 공지를 확인하고 수치를 갱신하세요.",
+    "   답변에는 항상 as_of 와 '국제교류처 확인' 안내가 함께 붙습니다."
+  ],
+  "as_of": "2026-07-25",
+  "schools": [
+    {
+      "key": "uos",
+      "name_en": "University of Seoul",
+      "name_ko": "서울시립대학교",
+      "aliases": ["university of seoul", "uos", "서울시립대", "시립대", "seoul city university", "서울시립대학교"],
+      "source_title": "University of Seoul · Office of International Affairs — scholarships for international students",
+      "source_url": "https://www.uos.ac.kr/",
+      "context_note": "A public (city-funded) university — tuition is already among the lowest in Seoul, so scholarships stack on a low base.",
+      "scholarships": [
+        {
+          "id": "uos-admission",
+          "name_en": "International Student Admission Scholarship",
+          "name_ko": "외국인 신입생 입학장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)", "Master's", "Ph.D."],
+          "topik_min": null,
+          "benefit": "Tuition reduction for new degree entrants, tiered by admission evaluation and Korean proficiency.",
+          "amount_hint": "30–100% of tuition",
+          "verify": true
+        },
+        {
+          "id": "uos-topik",
+          "name_en": "Korean Proficiency (TOPIK) Scholarship",
+          "name_ko": "한국어능력 우수 장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)", "Master's", "Ph.D."],
+          "topik_min": 4,
+          "benefit": "Additional tuition reduction for enrolled international students holding TOPIK level 4 or above.",
+          "amount_hint": "partial tuition",
+          "verify": true
+        },
+        {
+          "id": "uos-grad-assistant",
+          "name_en": "Graduate Research / Teaching Assistantship (RA·TA)",
+          "name_ko": "대학원 연구·교육 조교",
+          "levels": ["Master's", "Ph.D."],
+          "topik_min": null,
+          "benefit": "Lab- or department-assigned assistantship: monthly stipend plus tuition support. Applied for through your advisor, not the admissions office.",
+          "amount_hint": "stipend + tuition support",
+          "verify": true
+        },
+        {
+          "id": "uos-academic",
+          "name_en": "Academic Excellence Scholarship",
+          "name_ko": "성적우수 장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)", "Master's", "Ph.D."],
+          "topik_min": null,
+          "gpa_min": 3.5,
+          "benefit": "Awarded each semester on the previous semester's GPA — you become eligible only after one semester of grades.",
+          "amount_hint": "partial tuition",
+          "verify": true
+        }
+      ]
+    },
+    {
+      "key": "sookmyung",
+      "name_en": "Sookmyung Women's University",
+      "name_ko": "숙명여자대학교",
+      "aliases": ["sookmyung", "sook myung", "숙명여대", "숙대", "숙명여자대학교", "sookmyung women's university", "sookmyung womens university"],
+      "source_title": "Sookmyung Women's University · Office of International Affairs — scholarships for international students",
+      "source_url": "https://www.sookmyung.ac.kr/",
+      "context_note": "A private women's university in Seoul — degree admission is for women applicants.",
+      "scholarships": [
+        {
+          "id": "smu-admission",
+          "name_en": "Global Admission Scholarship",
+          "name_ko": "외국인 입학장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)"],
+          "topik_min": null,
+          "benefit": "Tuition reduction for new international undergraduates, tiered by Korean proficiency at admission (higher TOPIK level → higher tier).",
+          "amount_hint": "30–70% of tuition",
+          "verify": true
+        },
+        {
+          "id": "smu-topik",
+          "name_en": "TOPIK Level Scholarship",
+          "name_ko": "한국어능력(TOPIK) 장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)", "Master's", "Ph.D."],
+          "topik_min": 4,
+          "benefit": "Continuing tuition reduction for enrolled international students who hold TOPIK level 4 or above.",
+          "amount_hint": "partial tuition",
+          "verify": true
+        },
+        {
+          "id": "smu-academic",
+          "name_en": "Academic Excellence Scholarship",
+          "name_ko": "성적우수 장학금",
+          "levels": ["Undergraduate (1-2yr)", "Undergraduate (3-4yr)", "Master's", "Ph.D."],
+          "topik_min": null,
+          "gpa_min": 3.5,
+          "benefit": "Awarded each semester on the previous semester's GPA, for students carrying a full course load.",
+          "amount_hint": "partial tuition",
+          "verify": true
+        },
+        {
+          "id": "smu-grad",
+          "name_en": "Graduate School International Student Scholarship",
+          "name_ko": "대학원 외국인 유학생 장학금",
+          "levels": ["Master's", "Ph.D."],
+          "topik_min": null,
+          "benefit": "Departmental tuition support for international graduate students, awarded with the admission decision and reviewed each semester.",
+          "amount_hint": "partial tuition",
+          "verify": true
+        }
+      ]
+    }
+  ],
+  "nationwide": [
+    {
+      "id": "gks",
+      "name_en": "GKS — Global Korea Scholarship (government-funded)",
+      "name_ko": "정부초청외국인장학사업",
+      "benefit": "Full tuition, monthly allowance, airfare and one year of Korean language training — applied for through a Korean embassy or a designated university, not through your department.",
+      "source_title": "Study in Korea · GKS (National Institute for International Education)",
+      "source_url": "https://www.studyinkorea.go.kr/"
+    }
+  ]
+}

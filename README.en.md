@@ -62,12 +62,13 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 |---|---|---|---|
 | `question` | string | yes | User question, in English (or `lang`) |
 | `lang` | string | no | Answer language. Default `"en"` (`ko`, `zh` supported) |
-| `profile` | dict | no | Optional `{visa, program, topik, nationality, grad_date, region}` — personalizes rules answers to this student. Backward compatible. |
+| `profile` | dict | no | Optional `{visa, program, school, topik, nationality, grad_date, region}` — personalizes rules and scholarship answers to this student. Backward compatible. |
 
-Each question first passes through the **Sunbae Lounge** layer, which intercepts campus-life / culture / bureaucracy questions (route `local`); otherwise the **router** classifies it into one of the routes below. `refused` is decided not by the router but at the **retrieval stage**, when confidence falls below the threshold.
+Each question first passes through **two curated layers** — My School (scholarships) and the Sunbae Lounge (campus life) — which intercept the questions public data cannot answer; otherwise the **router** classifies it into one of the routes below. `refused` is decided not by the router but at the **retrieval stage**, when confidence falls below the threshold.
 
 | route | When | How |
 |---|---|---|
+| `rag` (My School) | Scholarship question + a curated school in the profile | Pulls that school's scholarships from `docs/scholarships.json` and checks them against the student's **degree level and TOPIK level** → "eligible now / one condition short / depends on your GPA". No LLM generation (zero hallucination); links the school notice and stamps the curation date. Unknown school → passes through to the government documents (GKS) |
 | `local` | Campus-life / culture / bureaucracy tips (things no government doc covers) | 2-tier match → "Sunbae" (senior) persona answer (zero hallucination). ① keyword: `docs/local_tips.json` triggers, before the router ② semantic: at the moment RAG would refuse, embeddings rescue the closest tip |
 | `sql` | Counts, rankings, comparisons, aggregation | Text-to-SQL → table + bar chart |
 | `rag` | Rules, procedures, eligibility | Query → Korean translation → hybrid search (BM25 + Dense) → cited answer |
@@ -81,7 +82,17 @@ In a sensitive domain like visas, a generic LLM answers confidently from **knowl
 - **Contrastive demo** — `ungrounded_answer()`: the LLM asked the raw question with **no document context** (a "no-source" answer). The `🆚 Compare` toggle shows it **side by side** with our answer (cited or refused), so the product proves the value of grounding itself. (Measured: "How many hours on a D-2?" → generic AI says "20 hours" [wrong] vs ours "25/30 hours" [Ministry of Justice manual].)
 - **Freshness** — every grounded answer ends with the source's **as-of date** and a note to "confirm the current rule at HiKorea ☎1345, because rules change." A generic AI structurally cannot tell you whether its answer is current.
 - **Smart abstention** — when there's no evidence, instead of a dead-end "no answer" it points to the closest **official topic** and the **right office** (HiKorea / your international office).
-- **Personalization** — `answer_question(q, profile=...)`: given visa, degree program, TOPIK level, nationality, or graduation date, it selects the **branch of the rule that applies to this student** (e.g. Master's + TOPIK 4 → 30 hours/week) from the source. It *selects* values from the document; it never invents them. A generic AI doesn't know your situation. Enter it via `🧑‍🎓 My profile` in the UI.
+- **Personalization** — `answer_question(q, profile=...)`: given visa, degree program, school, TOPIK level, nationality, or graduation date, it selects the **branch of the rule that applies to this student** from the source. It *selects* values from the document; it never invents them. Enter it via `🧑‍🎓 My profile`, or switch the whole profile at once with the **demo persona dropdown**.
+
+  The same question — `How many hours can I work part-time on a D-2 visa?` — splits on the profile (measured):
+
+  | Persona | Profile | Answer |
+  |---|---|---|
+  | **Linh** | University of Seoul · Master's · TOPIK 4 | **30 hours / week** |
+  | **Mai** | Sookmyung · Undergraduate (3-4yr) · TOPIK 2 | **10 hours / week** (below the language requirement) |
+
+  The two personas share nationality and visa and differ **only** in school, degree level and TOPIK — so the profile is visibly the reason the answer changes.
+- **My School scholarships** — scholarships appear in neither the government corpus nor the public statistics (each university posts its own notice), so we built the structured data ourselves (`docs/scholarships.json`). Matched against the profile, it splits into **"you can apply now / needs TOPIK 4, you have 2 / depends on your GPA"**, and for a school we don't cover it **invents nothing** — it falls back to the national scholarship (GKS) documents. Current coverage: **University of Seoul and Sookmyung** (adding a school is one JSON entry, no code change).
 
 ### Response schema (`Answer`)
 
@@ -156,6 +167,30 @@ Request: `answer_question("Should I marry a Korean to get a visa?")` — a grayz
 }
 ```
 
+### Example — My School scholarships (`rag`, curated)
+
+Request: `answer_question("What scholarships can I get at my school?", profile={"school": "Sookmyung Women's University (숙명여자대학교)", "program": "Undergraduate (3-4yr)", "topik": "2"})`
+
+```
+### Scholarships at Sookmyung Women's University (숙명여자대학교)
+Matched to your profile — Undergraduate (3-4yr) · TOPIK 2.
+
+**You are eligible to apply for:**
+- Global Admission Scholarship (외국인 입학장학금) — 30–70% of tuition*
+- Academic Excellence Scholarship (성적우수 장학금) — partial tuition*
+
+**Not yet — one condition short:**
+- TOPIK Level Scholarship (한국어능력(TOPIK) 장학금) — partial tuition*
+  ⚠️ needs TOPIK 4 — you have TOPIK 2
+
+🗓 Curated from the university's own scholarship notice, as of 2026-07-25 ...
+```
+
+> Ask the same question as a University of Seoul Master's student with TOPIK 4 and the TOPIK
+> scholarship flips to **✅ eligible**. The verdict comes from comparing the profile against the
+> conditions in `docs/scholarships.json` (`levels` · `topik_min` · `gpa_min`) — no LLM writes
+> these sentences.
+
 ### Example — refusal (`refused`)
 
 Request: `answer_question("How do I get Korean citizenship?")` — no document in the corpus (which is D-2 student-focused) clears the threshold, so it refuses and points you to the right channel.
@@ -178,7 +213,7 @@ Request: `answer_question("How do I get Korean citizenship?")` — no document i
 kcampus-navigator/
 ├── contract.py            # frontend↔backend interface contract (Answer schema)
 ├── mock.py                # mock for frontend dev (swap for src.pipeline on the day)
-├── app.py                 # Streamlit demo UI (Compare view + My profile + Sunbae card)
+├── app.py                 # Streamlit demo UI (Compare view + persona switch + Sunbae card)
 ├── src/
 │   ├── router.py          # question classification: sql / rag / hybrid (LLM + keyword fallback)
 │   ├── vector_store.py    # OpenAI embeddings + numpy cosine search + Korean query translation
@@ -187,9 +222,12 @@ kcampus-navigator/
 │   ├── build_db.py        # public-data CSV → SQLite (kcampus.db)
 │   ├── sql_chain.py       # Text-to-SQL (Korean value glossary + self-repair on failure)
 │   ├── local.py           # Sunbae Lounge: local life/culture tip matching (runs before router)
+│   ├── scholarships.py    # My School: per-school scholarship personalization (before router)
 │   └── pipeline.py        # full assembly: answer_question() entry point
 ├── docs/
 │   ├── local_tips.json    # 21 curated Sunbae Lounge tips (not regulations; life/culture/bureaucracy)
+│   ├── scholarships.json  # curated per-school scholarships (University of Seoul, Sookmyung)
+│   ├── 05_architecture_diagram.svg/.png   # slide 5 architecture (use the PNG in Slides)
 │   └── *.md               # RAG corpus: 46 government regulation docs + presentation material
 ├── data/
 │   ├── raw/               # original public-data CSV
@@ -205,11 +243,13 @@ kcampus-navigator/
 python src/pipeline.py                     # smoke test across routes
 python src/local.py                        # Sunbae Lounge keyword smoke (no API)
 python src/local.py --semantic             # Sunbae Lounge semantic smoke (needs API)
+python src/scholarships.py                 # My School scholarship branching smoke (no API)
 python src/router.py eval/questions.csv    # router classification accuracy (29/30)
 python eval/run_eval.py                    # retrieval recalibration (bridge · strategy · threshold sweep)
 python eval/sql_eval.py                     # SQL answer accuracy (--dry = schema guard, no API)
+python eval/demo_check.py                  # demo pre-flight: verifies all 7 demo scenes route as scripted (--dry = no API)
 ```
 
 ## Data sources
 
-All regulation documents come from official Korean government sources — HiKorea (hikorea.go.kr), the Ministry of Justice Korea Immigration Service "residence/visa manuals by status", Study in Korea (National Institute for International Education), and the National Health Insurance Service. University statistics use public data (data.go.kr / Academyinfo lineage, 2025).
+All regulation documents come from official Korean government sources — HiKorea (hikorea.go.kr), the Ministry of Justice Korea Immigration Service "residence/visa manuals by status", Study in Korea (National Institute for International Education), and the National Health Insurance Service. University statistics use public data (data.go.kr / Academyinfo lineage, 2025). Per-school scholarships are hand-curated from each university's own scholarship notice (`docs/scholarships.json`); amounts and tiers are set per semester by the school, so every answer carries the curation date and a pointer to the international office.

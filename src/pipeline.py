@@ -9,6 +9,8 @@ pipeline.py — 전체 조립: 질문 → 라우팅 → 검색/생성 → Answer
 
 흐름 (SSOT §4 아키텍처)
     질문
+     → match_scholarship       My School: 장학금 질문 + 아는 학교면 학교별 답변
+     → match_local             선배 라운지: 캠퍼스 생활 팁이면 여기서 종료
      → route_question          라우터: sql / rag / hybrid
      → rag  : Retriever(하이브리드+Abstention) → 근거 있으면 LLM 이 영어로 답변 인용,
               근거 없으면 refused
@@ -48,6 +50,7 @@ from router import route_question
 from retriever import Retriever, RetrievalResult
 from vector_store import VectorStore
 from local import match_local, rescue_local
+from scholarships import match_scholarship
 
 _client = OpenAI()
 _LLM = os.getenv("LLM_MODEL", "gpt-4o-mini")
@@ -130,6 +133,7 @@ def _profile_block(profile: dict | None) -> str:
     order = [
         ("visa", "Visa / stay status"),
         ("program", "Degree program"),
+        ("school", "University"),
         ("topik", "TOPIK level"),
         ("nationality", "Nationality"),
         ("grad_date", "Expected graduation"),
@@ -396,9 +400,9 @@ def answer_question(question: str, lang: str = "en",
                     profile: dict | None = None) -> Answer:
     """프론트가 호출하는 유일한 진입점.
 
-    profile(선택): {visa, program, topik, nationality, grad_date, region} 중
-    채워진 것만. 규정(rag/hybrid) 답변을 그 학생 기준으로 맞춤화합니다.
-    기존 호출부는 profile 없이 그대로 동작합니다(하위호환).
+    profile(선택): {visa, program, school, topik, nationality, grad_date,
+    region} 중 채워진 것만. 규정(rag/hybrid) 답변을 그 학생 기준으로
+    맞춤화합니다. 기존 호출부는 profile 없이 그대로 동작합니다(하위호환).
     """
     if not question or not question.strip():
         return {
@@ -406,6 +410,14 @@ def answer_question(question: str, lang: str = "en",
             "chart": EMPTY_CHART, "sources": [], "confidence": 0.0,
             "refused_reason": "Empty question.",
         }
+
+    # My School 레이어 — 장학금 질문 + 프로필에 아는 학교면 학교별 큐레이션
+    # 데이터로 답합니다. 장학금은 규정 코퍼스에도 통계 DB 에도 없는 정보라
+    # (대학 홈페이지 공지가 유일 출처) 우리가 직접 만든 데이터만이 답할 수
+    # 있습니다. 모르는 학교면 None → 평소대로 정부 문서(GKS 등)로 흐릅니다.
+    sch = match_scholarship(question, profile)
+    if sch is not None:
+        return sch
 
     # 선배 라운지 — 라우터보다 먼저. 규정/통계로는 답할 수 없지만 유학생이
     # 실제로 궁금해하는 캠퍼스 생활·문화·행정 질문(예: "결혼으로 비자?",
