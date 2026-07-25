@@ -24,4 +24,4 @@ env/
 Thumbs.db
 desktop.ini
 .vscode/
-.idea/
+.idea/*.bak

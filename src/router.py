@@ -1,4 +1,4 @@
-"""
+﻿"""
 router.py — 질문을 SQL / RAG / Hybrid 경로로 분류
 
 설계 원칙
@@ -126,7 +126,7 @@ The system has TWO data sources:
     Statistics about Korean universities:
       - international student counts by university / nationality / degree program
       - university location (city, province), size, public vs private
-      - dropout rates, dormitory capacity, scholarship counts
+      - dormitory capacity (dorm_capacity)
     Use this when answering requires COUNTING, RANKING, COMPARING, FILTERING,
     or AGGREGATING numbers.
 

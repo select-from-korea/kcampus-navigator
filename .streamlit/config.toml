@@ -1,0 +1,23 @@
+# 반영본 ② — 전역 테마 (가시 표면 폴리싱)
+# 두는 곳: 레포 루트의  .streamlit/config.toml
+# 효과: 기본 Streamlit(흰 배경 + 빨강 액센트)을 "공식·신뢰" 톤으로 통일.
+#       거부/선배 카드의 기존 커스텀 CSS와 충돌 없음(그 카드는 인라인 스타일 유지).
+
+[theme]
+# 신뢰/공식 느낌의 딥 블루 — 규정 도메인에 맞는 액센트.
+# 선배 라운지 오렌지(#F97316)와 보색으로 나란히 놓여도 안정적.
+primaryColor = "#1D4ED8"
+
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F7FA"   # 카드/expander/사이드바 배경
+textColor = "#1F2933"                  # 순수 검정보다 부드러운 잉크 톤
+font = "sans serif"
+
+[ui]
+hideTopBar = false
+
+[client]
+toolbarMode = "minimal"   # 데모 중 우상단 Streamlit 메뉴 노이즈 최소화
+
+[server]
+runOnSave = true
