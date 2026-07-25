@@ -42,7 +42,7 @@ python src/loader.py              # docs/*.md → data/processed/vectors.npz (�
 streamlit run app.py              # 데모 UI (기본 포트 8501)
 ```
 
-> 빌드된 `vectors.npz`·`kcampus.db` 가 저장소에 포함돼 있으면 `build_db`·`loader` 단계는 건너뛸 수 있습니다.
+> 빌드된 `vectors.npz`·`kcampus.db` 가 저장소에 포함돼 있어 `build_db`·`loader` 단계는 생략할 수 있습니다.
 
 ## 인터페이스 개요
 
@@ -123,18 +123,20 @@ answer = answer_question("Can I work part-time on a D-2 visa?", lang="en")
 ```json
 {
   "route": "sql",
-  "answer_text": "Yonsei University hosts the most international students in Seoul (4,740), followed by Korea University (4,471) and Chung-Ang University (4,257).",
-  "table_markdown": "| univ_name | univ_name_en | total |\n|---|---|---|\n| 연세대학교 | YONSEI UNIVERSITY | 4740 |\n| 고려대학교 | KOREA UNIVERSITY | 4471 |",
+  "answer_text": "The universities in Seoul with the most international students are Hanyang University with 7,437 students, Chung-Ang University with 4,864 students, and Kyung Hee University with 4,858 students.",
+  "table_markdown": "| univ_name | univ_name_en | students |\n|---|---|---|\n| 한양대학교 | HANYANG UNIVERSITY | 7437 |\n| 중앙대학교 | CHUNG-ANG UNIVERSITY | 4864 |\n| 경희대학교 | KYUNG HEE UNIVERSITY | 4858 |",
   "chart": {
-    "kind": "bar", "x_label": "univ_name", "y_label": "total",
-    "labels": ["연세대학교", "고려대학교", "중앙대학교"],
-    "values": [4740, 4471, 4257]
+    "kind": "bar", "x_label": "univ_name", "y_label": "students",
+    "labels": ["한양대학교", "중앙대학교", "경희대학교"],
+    "values": [7437, 4864, 4858]
   },
   "sources": [{ "title": "대학별 외국인 유학생 현황 · 대학 기본정보 (2025)", "snippet": "SQL: SELECT ...", "url": "https://www.data.go.kr/", "score": 1.0 }],
   "confidence": 1.0,
   "refused_reason": ""
 }
 ```
+
+> 유학생 수 = 등록 유학생 전체(어학·교환 포함) headcount 기준 — 전국 197,163명과 동일 기준입니다.
 
 ### 예시 — 선배 라운지 (`local`)
 
@@ -191,7 +193,8 @@ kcampus-navigator/
 │   ├── raw/               # 원본 공공데이터 CSV
 │   └── processed/         # vectors.npz(검색 인덱스), kcampus.db(SQLite)
 ├── notebooks/eda.ipynb    # 7 Steps EDA (결측 MAR·국적 다양성)
-└── eval/                  # 평가셋 30문항 + 재보정 하니스(run_eval.py)
+├── .streamlit/config.toml # 데모 UI 테마
+└── eval/                  # 평가셋 30문항 + 재보정 하니스(run_eval.py) + SQL 정확도(sql_eval.py)
 ```
 
 ## 검증·재보정 명령
@@ -202,6 +205,7 @@ python src/local.py                        # 선배 라운지 키워드 스모�
 python src/local.py --semantic             # 선배 라운지 의미 매칭 스모크 (API 필요)
 python src/router.py eval/questions.csv    # 라우터 분류 정확도 (29/30)
 python eval/run_eval.py                    # 검색 재보정 (브릿지·전략·임계값 스윕)
+python eval/sql_eval.py                     # SQL 정답 정확도 (--dry 는 무API 스키마 가드)
 ```
 
 ## 데이터 출처

@@ -44,7 +44,7 @@ streamlit run app.py              # demo UI (default port 8501)
 ```
 
 > `app.py` imports the real pipeline: `from src.pipeline import answer_question, baseline_answer, ungrounded_answer`. To preview the UI without a backend, swap the first import for `from mock import answer_question` (same signature).
-> If the built `vectors.npz` and `kcampus.db` are committed, you can skip the `build_db` / `loader` steps.
+> The built `vectors.npz` and `kcampus.db` are committed, so you can skip the `build_db` / `loader` steps.
 
 ## Interface overview
 
@@ -125,18 +125,20 @@ Request: `answer_question("Which universities in Seoul have the most internation
 ```json
 {
   "route": "sql",
-  "answer_text": "Yonsei University hosts the most international students in Seoul (4,740), followed by Korea University (4,471) and Chung-Ang University (4,257).",
-  "table_markdown": "| univ_name | univ_name_en | total |\n|---|---|---|\n| 연세대학교 | YONSEI UNIVERSITY | 4740 |\n| 고려대학교 | KOREA UNIVERSITY | 4471 |",
+  "answer_text": "The universities in Seoul with the most international students are Hanyang University with 7,437 students, Chung-Ang University with 4,864 students, and Kyung Hee University with 4,858 students.",
+  "table_markdown": "| univ_name | univ_name_en | students |\n|---|---|---|\n| 한양대학교 | HANYANG UNIVERSITY | 7437 |\n| 중앙대학교 | CHUNG-ANG UNIVERSITY | 4864 |\n| 경희대학교 | KYUNG HEE UNIVERSITY | 4858 |",
   "chart": {
-    "kind": "bar", "x_label": "univ_name", "y_label": "total",
-    "labels": ["연세대학교", "고려대학교", "중앙대학교"],
-    "values": [4740, 4471, 4257]
+    "kind": "bar", "x_label": "univ_name", "y_label": "students",
+    "labels": ["한양대학교", "중앙대학교", "경희대학교"],
+    "values": [7437, 4864, 4858]
   },
   "sources": [{ "title": "대학별 외국인 유학생 현황 · 대학 기본정보 (2025)", "snippet": "SQL: SELECT ...", "url": "https://www.data.go.kr/", "score": 1.0 }],
   "confidence": 1.0,
   "refused_reason": ""
 }
 ```
+
+> International-student counts are total registered headcount (incl. language & exchange programs) — the same 197,163 nationwide basis.
 
 ### Example — Sunbae Lounge (`local`)
 
@@ -193,7 +195,8 @@ kcampus-navigator/
 │   ├── raw/               # original public-data CSV
 │   └── processed/         # vectors.npz (search index), kcampus.db (SQLite)
 ├── notebooks/eda.ipynb    # 7-step EDA (missingness MAR · nationality diversity)
-└── eval/                  # 30-question eval set + recalibration harness (run_eval.py)
+├── .streamlit/config.toml # demo UI theme
+└── eval/                  # 30-question eval set + recalibration harness (run_eval.py) + SQL accuracy (sql_eval.py)
 ```
 
 ## Validation / recalibration commands
@@ -204,6 +207,7 @@ python src/local.py                        # Sunbae Lounge keyword smoke (no API
 python src/local.py --semantic             # Sunbae Lounge semantic smoke (needs API)
 python src/router.py eval/questions.csv    # router classification accuracy (29/30)
 python eval/run_eval.py                    # retrieval recalibration (bridge · strategy · threshold sweep)
+python eval/sql_eval.py                     # SQL answer accuracy (--dry = schema guard, no API)
 ```
 
 ## Data sources
